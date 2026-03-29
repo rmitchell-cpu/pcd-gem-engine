@@ -1,0 +1,72 @@
+{
+  "$defs": {
+    "EmailAngle": {
+      "enum": [
+        "fit",
+        "edge",
+        "proof",
+        "followup"
+      ],
+      "title": "EmailAngle",
+      "type": "string"
+    },
+    "LPEmail": {
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "subject_a": {
+          "title": "Subject A",
+          "type": "string"
+        },
+        "subject_b": {
+          "title": "Subject B",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "string"
+        },
+        "word_count": {
+          "title": "Word Count",
+          "type": "integer"
+        },
+        "angle": {
+          "$ref": "#/$defs/EmailAngle"
+        }
+      },
+      "required": [
+        "label",
+        "subject_a",
+        "subject_b",
+        "body",
+        "word_count",
+        "angle"
+      ],
+      "title": "LPEmail",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "fund_name": {
+      "title": "Fund Name",
+      "type": "string"
+    },
+    "emails": {
+      "items": {
+        "$ref": "#/$defs/LPEmail"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "title": "Emails",
+      "type": "array"
+    }
+  },
+  "required": [
+    "fund_name",
+    "emails"
+  ],
+  "title": "GEM3Emails",
+  "type": "object"
+}

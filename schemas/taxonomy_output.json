@@ -1,0 +1,133 @@
+{
+  "$defs": {
+    "BooleanStrings": {
+      "properties": {
+        "broad_thesis": {
+          "title": "Broad Thesis",
+          "type": "string"
+        },
+        "niche_deep_tech": {
+          "title": "Niche Deep Tech",
+          "type": "string"
+        },
+        "geo_specific": {
+          "title": "Geo Specific",
+          "type": "string"
+        }
+      },
+      "required": [
+        "broad_thesis",
+        "niche_deep_tech",
+        "geo_specific"
+      ],
+      "title": "BooleanStrings",
+      "type": "object"
+    },
+    "SearchStrategy": {
+      "properties": {
+        "verticals": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Verticals",
+          "type": "array"
+        },
+        "industries": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Industries",
+          "type": "array"
+        },
+        "keywords": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Keywords",
+          "type": "array"
+        }
+      },
+      "title": "SearchStrategy",
+      "type": "object"
+    },
+    "TranslationMatrixEntry": {
+      "properties": {
+        "fund_theme": {
+          "title": "Fund Theme",
+          "type": "string"
+        },
+        "context_evidence": {
+          "title": "Context Evidence",
+          "type": "string"
+        },
+        "primary_match": {
+          "title": "Primary Match",
+          "type": "string"
+        },
+        "secondary_matches": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Secondary Matches",
+          "type": "array"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fund_theme",
+        "context_evidence",
+        "primary_match",
+        "type"
+      ],
+      "title": "TranslationMatrixEntry",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "fund_name": {
+      "title": "Fund Name",
+      "type": "string"
+    },
+    "strategy_summary": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Strategy Summary"
+    },
+    "translation_matrix": {
+      "items": {
+        "$ref": "#/$defs/TranslationMatrixEntry"
+      },
+      "title": "Translation Matrix",
+      "type": "array"
+    },
+    "search_strategy": {
+      "$ref": "#/$defs/SearchStrategy"
+    },
+    "boolean_strings": {
+      "$ref": "#/$defs/BooleanStrings"
+    },
+    "canonical_strategy_tags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Canonical Strategy Tags",
+      "type": "array"
+    }
+  },
+  "required": [
+    "fund_name",
+    "boolean_strings"
+  ],
+  "title": "TaxonomyOutput",
+  "type": "object"
+}

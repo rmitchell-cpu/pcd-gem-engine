@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ gp.gp_name }} — PCD GEM Engine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; color: #1a1a1a; }
+    header { background: #1a1a2e; color: white; padding: 18px 32px; }
+    header a { color: #8888aa; text-decoration: none; font-size: 13px; }
+    header a:hover { color: white; }
+    header h1 { font-size: 20px; font-weight: 600; margin-top: 4px; }
+    .container { max-width: 1100px; margin: 32px auto; padding: 0 24px; }
+    .card { background: white; border-radius: 10px; padding: 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 20px; }
+    .card h2 { font-size: 15px; font-weight: 600; color: #1a1a2e; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .meta-item label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; font-weight: 600; margin-bottom: 4px; }
+    .meta-item span { font-size: 14px; color: #1e293b; font-weight: 500; }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+    .badge-yellow { background: #fef9c3; color: #854d0e; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-gray { background: #f1f5f9; color: #475569; }
+    .btn { display: inline-block; padding: 10px 20px; background: #3b5bdb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; text-decoration: none; font-family: inherit; }
+    .btn:hover { background: #2f4ac0; }
+    .btn-secondary { background: #e2e8f0; color: #475569; }
+    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-sm { padding: 6px 14px; font-size: 13px; }
+    .top-actions { display: flex; gap: 10px; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { text-align: left; padding: 10px 12px; border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    td { padding: 12px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    a.job-link { color: #3b5bdb; text-decoration: none; font-weight: 500; }
+    a.job-link:hover { text-decoration: underline; }
+    .travel-chip { display: inline-flex; align-items: center; gap: 6px; background: #eef2ff; color: #3730a3; padding: 6px 12px; border-radius: 6px; font-size: 13px; margin: 4px 4px 4px 0; }
+    .travel-chip .dates { font-size: 11px; color: #6366f1; }
+    /* Upload zone */
+    .upload-zone { border: 2px dashed #cbd5e1; border-radius: 8px; padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s; }
+    .upload-zone:hover, .upload-zone.drag-over { border-color: #3b5bdb; background: #eef2ff; }
+    .upload-zone input { display: none; }
+    .upload-zone p { color: #64748b; font-size: 13px; margin-top: 4px; }
+    #pipeline-progress { display: none; margin-top: 12px; }
+    .progress-bar-wrap { background: #e2e8f0; border-radius: 999px; height: 6px; margin-top: 8px; }
+    .progress-bar { background: #3b5bdb; height: 6px; border-radius: 999px; width: 0%; transition: width 0.3s; animation: pulse-progress 1.5s ease-in-out infinite; }
+    @keyframes pulse-progress { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+    .status-msg { font-size: 13px; color: #475569; margin-top: 6px; }
+    .empty-state { text-align: center; padding: 24px; color: #94a3b8; font-size: 13px; }
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <a href="/">← Dashboard</a>
+    <h1 style="margin-top:4px">{{ gp.gp_name }}</h1>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="top-actions">
+    <a href="/gp/{{ gp.id }}/edit" class="btn btn-sm">Edit Record</a>
+  </div>
+
+  <!-- GP Info -->
+  <div class="card">
+    <h2>Fund Manager Record</h2>
+    <div class="meta-grid">
+      <div class="meta-item"><label>GP Name</label><span>{{ gp.gp_name }}</span></div>
+      <div class="meta-item"><label>Account Owner</label><span>{{ gp.account_owner or 'Randy Mitchell' }}</span></div>
+      <div class="meta-item"><label>Start Date</label><span>{{ gp.start_date or '—' }}</span></div>
+      <div class="meta-item">
+        <label>Pipeline Status</label>
+        <span>
+          {% if gp.pipeline_state == 'human_review_pending' %}<span class="badge badge-blue">Awaiting Review</span>
+          {% elif gp.pipeline_state == 'approved' %}<span class="badge badge-green">Approved</span>
+          {% elif gp.pipeline_state == 'rejected_tourist' %}<span class="badge badge-red">Tourist</span>
+          {% elif gp.pipeline_state %}<span class="badge badge-yellow">{{ gp.pipeline_state | replace('_', ' ') | title }}</span>
+          {% else %}<span style="color:#94a3b8">Not yet run</span>{% endif %}
+        </span>
+      </div>
+      <div class="meta-item">
+        <label>Gatekeeper Score</label>
+        <span>{% if gp.gatekeeper_score is not none %}<strong>{{ gp.gatekeeper_score }}</strong>/40{% else %}—{% endif %}</span>
+      </div>
+      <div class="meta-item">
+        <label>Payment</label>
+        <span>
+          {% if gp.payment_status == 'Verified' %}<span class="badge badge-green">Verified</span>
+          {% else %}<span class="badge badge-yellow">Pending</span>{% endif %}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact -->
+  <div class="card">
+    <h2>Contact</h2>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <label>Name</label>
+        <span>
+          {% if gp.contact_first_name %}{{ gp.contact_first_name }} {{ gp.contact_last_name or '' }}{% else %}<span style="color:#94a3b8">Not set</span>{% endif %}
+        </span>
+      </div>
+      <div class="meta-item">
+        <label>Email</label>
+        <span>{% if gp.contact_email %}<a href="mailto:{{ gp.contact_email }}" style="color:#3b5bdb;text-decoration:none">{{ gp.contact_email }}</a>{% else %}<span style="color:#94a3b8">—</span>{% endif %}</span>
+      </div>
+      <div class="meta-item">
+        <label>Phone</label>
+        <span>{{ gp.contact_phone or '—' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Financials -->
+  <div class="card">
+    <h2>Financials</h2>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <label>Subscription Price</label>
+        <span>{% if gp.sub_price_usd is not none %}US$ {{ "%.2f"|format(gp.sub_price_usd) }}{% else %}—{% endif %}</span>
+      </div>
+      <div class="meta-item">
+        <label>Fund II Net IRR</label>
+        <span>{% if gp.fund_ii_net_irr is not none %}{{ gp.fund_ii_net_irr }}%{% else %}—{% endif %}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Travel -->
+  {% if gp.travel_dates and gp.travel_dates | length > 0 %}
+  <div class="card">
+    <h2>Pending Travel</h2>
+    <div>
+      {% for trip in gp.travel_dates %}
+      <div class="travel-chip">
+        <strong>{{ trip.city }}</strong>
+        <span class="dates">{{ trip.start_date or '?' }} — {{ trip.end_date or '?' }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Run Pipeline -->
+  <div class="card">
+    <h2>Run GEM Pipeline</h2>
+    <div class="upload-zone" id="drop-zone" onclick="document.getElementById('deck-input').click()">
+      <div style="font-size:24px;margin-bottom:4px">📄</div>
+      <strong>Drop a deck PDF here or click to upload</strong>
+      <p>Runs the full GEM pipeline and links results to this GP record</p>
+      <input type="file" id="deck-input" accept=".pdf">
+    </div>
+    <div id="pipeline-progress">
+      <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+      <div class="status-msg" id="status-msg">Starting pipeline...</div>
+    </div>
+  </div>
+
+  <!-- Job History -->
+  <div class="card">
+    <h2>Pipeline Run History</h2>
+    {% if jobs %}
+    <table>
+      <thead>
+        <tr>
+          <th>Job ID</th>
+          <th>State</th>
+          <th>Score</th>
+          <th>Classification</th>
+          <th>Run Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for j in jobs %}
+        <tr>
+          <td><a class="job-link" href="/jobs/{{ j.job_id }}">{{ j.job_id }}</a></td>
+          <td>
+            {% if j.state == 'human_review_pending' %}<span class="badge badge-blue">Review</span>
+            {% elif j.state == 'rejected_tourist' %}<span class="badge badge-red">Tourist</span>
+            {% elif j.state == 'approved' %}<span class="badge badge-green">Approved</span>
+            {% elif j.state == 'failed' %}<span class="badge badge-red">Failed</span>
+            {% else %}<span class="badge badge-yellow">{{ j.state | replace('_', ' ') | title }}</span>
+            {% endif %}
+          </td>
+          <td>{% if j.gatekeeper_score is not none %}{{ j.gatekeeper_score }}/40{% else %}—{% endif %}</td>
+          <td>{{ j.gatekeeper_class or '—' }}</td>
+          <td style="font-size:12px;color:#64748b">{{ j.created_at[:19] if j.created_at else '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">No pipeline runs yet — upload a deck above to get started.</div>
+    {% endif %}
+  </div>
+
+</div>
+
+<script>
+const gpId = "{{ gp.id }}";
+const dropZone = document.getElementById('drop-zone');
+const deckInput = document.getElementById('deck-input');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) runPipeline(file);
+});
+deckInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) runPipeline(file);
+});
+
+async function runPipeline(file) {
+  if (!file.name.toLowerCase().endsWith('.pdf')) {
+    alert('Only PDF files are accepted.');
+    return;
+  }
+
+  const progress = document.getElementById('pipeline-progress');
+  const bar = document.getElementById('progress-bar');
+  const msg = document.getElementById('status-msg');
+  progress.style.display = 'block';
+  bar.style.width = '15%';
+  msg.textContent = `Uploading ${file.name}...`;
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  let trackingId;
+  try {
+    const res = await fetch(`/gp/${gpId}/run-pipeline`, { method: 'POST', body: formData });
+    const data = await res.json();
+    if (data.error) { msg.textContent = 'Error: ' + data.error; return; }
+    trackingId = data.tracking_id;
+    bar.style.width = '30%';
+    msg.textContent = 'Running GEM pipeline — this takes 2-3 minutes...';
+  } catch (err) {
+    msg.textContent = 'Upload failed: ' + err;
+    return;
+  }
+
+  // Poll
+  const poll = setInterval(async () => {
+    try {
+      const res = await fetch(`/api/tracking/${trackingId}`);
+      const data = await res.json();
+      if (data.status === 'running') {
+        const cur = parseFloat(bar.style.width) || 30;
+        if (cur < 85) bar.style.width = (cur + 3) + '%';
+      } else {
+        clearInterval(poll);
+        bar.style.width = '100%';
+        bar.style.animation = 'none';
+        bar.style.background = '#22c55e';
+        msg.textContent = 'Pipeline complete. Reloading...';
+        setTimeout(() => location.reload(), 1000);
+      }
+    } catch (e) {}
+  }, 2500);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+{
+  "$defs": {
+    "GatekeeperClassification": {
+      "enum": [
+        "native",
+        "high_potential_aspiring",
+        "tourist"
+      ],
+      "title": "GatekeeperClassification",
+      "type": "string"
+    },
+    "WorkflowState": {
+      "enum": [
+        "uploaded",
+        "parsed",
+        "gatekeeper_complete",
+        "rejected_tourist",
+        "analyst_complete",
+        "angle_brief_complete",
+        "taxonomy_complete",
+        "deal_card_complete",
+        "email_drafts_complete",
+        "randy_eval_complete",
+        "cross_gem_eval_complete",
+        "regeneration_required",
+        "regenerated",
+        "human_review_pending",
+        "approved",
+        "archived",
+        "failed"
+      ],
+      "title": "WorkflowState",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "job_id": {
+      "title": "Job Id",
+      "type": "string"
+    },
+    "fund_name": {
+      "title": "Fund Name",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "pipeline_status": {
+      "$ref": "#/$defs/WorkflowState"
+    },
+    "gatekeeper_classification": {
+      "$ref": "#/$defs/GatekeeperClassification"
+    },
+    "gatekeeper_score": {
+      "title": "Gatekeeper Score",
+      "type": "integer"
+    },
+    "evaluator_passed": {
+      "title": "Evaluator Passed",
+      "type": "boolean"
+    },
+    "regeneration_count": {
+      "default": 0,
+      "title": "Regeneration Count",
+      "type": "integer"
+    },
+    "artifacts": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Artifacts",
+      "type": "object"
+    },
+    "flagged_items": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Flagged Items",
+      "type": "array"
+    },
+    "requires_manual_attention": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Requires Manual Attention",
+      "type": "array"
+    }
+  },
+  "required": [
+    "job_id",
+    "fund_name",
+    "created_at",
+    "pipeline_status",
+    "gatekeeper_classification",
+    "gatekeeper_score",
+    "evaluator_passed",
+    "artifacts"
+  ],
+  "title": "ReviewBundleManifest",
+  "type": "object"
+}

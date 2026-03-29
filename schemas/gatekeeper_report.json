@@ -1,0 +1,91 @@
+{
+  "$defs": {
+    "GatekeeperClassification": {
+      "enum": [
+        "native",
+        "high_potential_aspiring",
+        "tourist"
+      ],
+      "title": "GatekeeperClassification",
+      "type": "string"
+    },
+    "PillarScore": {
+      "properties": {
+        "score": {
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Score",
+          "type": "integer"
+        },
+        "diagnostic": {
+          "title": "Diagnostic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score",
+        "diagnostic"
+      ],
+      "title": "PillarScore",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "fund_name": {
+      "title": "Fund Name",
+      "type": "string"
+    },
+    "coiled_spring": {
+      "$ref": "#/$defs/PillarScore"
+    },
+    "inbound_gravity": {
+      "$ref": "#/$defs/PillarScore"
+    },
+    "outbound_mechanics": {
+      "$ref": "#/$defs/PillarScore"
+    },
+    "logic_discipline": {
+      "$ref": "#/$defs/PillarScore"
+    },
+    "total_score": {
+      "maximum": 40,
+      "minimum": 0,
+      "title": "Total Score",
+      "type": "integer"
+    },
+    "classification": {
+      "$ref": "#/$defs/GatekeeperClassification"
+    },
+    "critical_flaw": {
+      "title": "Critical Flaw",
+      "type": "string"
+    },
+    "pcd_intervention_viable": {
+      "title": "Pcd Intervention Viable",
+      "type": "boolean"
+    },
+    "pcd_intervention_detail": {
+      "title": "Pcd Intervention Detail",
+      "type": "string"
+    },
+    "proprietary_penalty_applied": {
+      "default": false,
+      "title": "Proprietary Penalty Applied",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "fund_name",
+    "coiled_spring",
+    "inbound_gravity",
+    "outbound_mechanics",
+    "logic_discipline",
+    "total_score",
+    "classification",
+    "critical_flaw",
+    "pcd_intervention_viable",
+    "pcd_intervention_detail"
+  ],
+  "title": "GatekeeperReport",
+  "type": "object"
+}

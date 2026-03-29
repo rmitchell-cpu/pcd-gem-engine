@@ -1,0 +1,114 @@
+{
+  "$defs": {
+    "EmailEvaluation": {
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "voice_score": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Voice Score",
+          "type": "integer"
+        },
+        "lp_relevance_score": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Lp Relevance Score",
+          "type": "integer"
+        },
+        "cta_quality_score": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Cta Quality Score",
+          "type": "integer"
+        },
+        "forwardability_score": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Forwardability Score",
+          "type": "integer"
+        },
+        "overall_score": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Overall Score",
+          "type": "integer"
+        },
+        "issues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "revision_instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision Instructions"
+        }
+      },
+      "required": [
+        "label",
+        "voice_score",
+        "lp_relevance_score",
+        "cta_quality_score",
+        "forwardability_score",
+        "overall_score"
+      ],
+      "title": "EmailEvaluation",
+      "type": "object"
+    },
+    "EvalDecision": {
+      "enum": [
+        "pass",
+        "revise"
+      ],
+      "title": "EvalDecision",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "overall_pass": {
+      "title": "Overall Pass",
+      "type": "boolean"
+    },
+    "emails_evaluated": {
+      "items": {
+        "$ref": "#/$defs/EmailEvaluation"
+      },
+      "title": "Emails Evaluated",
+      "type": "array"
+    },
+    "decision": {
+      "$ref": "#/$defs/EvalDecision"
+    },
+    "revision_summary": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revision Summary"
+    }
+  },
+  "required": [
+    "overall_pass",
+    "emails_evaluated",
+    "decision"
+  ],
+  "title": "RandyEvalOutput",
+  "type": "object"
+}

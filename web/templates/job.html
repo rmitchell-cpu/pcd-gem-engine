@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ job.fund_name }} — PCD GEM Engine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; color: #1a1a1a; }
+    header { background: #1a1a2e; color: white; padding: 18px 32px; display: flex; align-items: center; gap: 16px; }
+    header a { color: #8888aa; text-decoration: none; font-size: 13px; }
+    header a:hover { color: white; }
+    header h1 { font-size: 20px; font-weight: 600; }
+    .container { max-width: 1100px; margin: 32px auto; padding: 0 24px; }
+    .card { background: white; border-radius: 10px; padding: 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 20px; }
+    .card h2 { font-size: 15px; font-weight: 600; color: #1a1a2e; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .meta-item label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; font-weight: 600; margin-bottom: 4px; }
+    .meta-item span { font-size: 14px; color: #1e293b; font-weight: 500; }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+    .badge-yellow { background: #fef9c3; color: #854d0e; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-gray { background: #f1f5f9; color: #475569; }
+    /* Artifact accordions */
+    .artifact { border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+    .artifact-header { padding: 12px 16px; background: #f8fafc; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+    .artifact-header:hover { background: #f1f5f9; }
+    .artifact-title { font-size: 13px; font-weight: 600; color: #1e293b; }
+    .artifact-chevron { font-size: 12px; color: #94a3b8; transition: transform 0.2s; }
+    .artifact-body { display: none; padding: 0; }
+    .artifact-body.open { display: block; }
+    .artifact-body pre { background: #0f172a; color: #e2e8f0; padding: 16px; font-size: 12px; line-height: 1.6; overflow-x: auto; margin: 0; white-space: pre-wrap; word-break: break-word; }
+    /* Key fields display */
+    .artifact-summary { padding: 14px 16px; border-top: 1px solid #e2e8f0; }
+    .field-row { display: flex; gap: 12px; padding: 5px 0; border-bottom: 1px solid #f8fafc; font-size: 13px; }
+    .field-row:last-child { border-bottom: none; }
+    .field-key { color: #64748b; min-width: 200px; flex-shrink: 0; }
+    .field-val { color: #1e293b; }
+    /* Log table */
+    .log-table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: monospace; }
+    .log-table th { text-align: left; padding: 6px 10px; border-bottom: 1px solid #e2e8f0; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; font-family: -apple-system, sans-serif; }
+    .log-table td { padding: 6px 10px; border-bottom: 1px solid #f8fafc; vertical-align: top; color: #475569; }
+    .log-table tr:last-child td { border-bottom: none; }
+    .result-ok { color: #16a34a; font-weight: 600; }
+    .result-fail { color: #dc2626; font-weight: 600; }
+    /* Score display */
+    .score-bar { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+    .score-number { font-size: 32px; font-weight: 700; color: #1e293b; }
+    .score-denom { font-size: 16px; color: #94a3b8; }
+    .score-fill-wrap { flex: 1; background: #e2e8f0; border-radius: 999px; height: 8px; }
+    .score-fill { height: 8px; border-radius: 999px; background: #3b5bdb; }
+    /* Pillar scores */
+    .pillars { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px; }
+    .pillar { background: #f8fafc; border-radius: 8px; padding: 12px 14px; }
+    .pillar-name { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; font-weight: 600; margin-bottom: 4px; }
+    .pillar-score { font-size: 20px; font-weight: 700; color: #1e293b; }
+    .pillar-diag { font-size: 12px; color: #64748b; margin-top: 4px; line-height: 1.4; }
+    /* Emails */
+    .email-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .email-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; font-weight: 600; margin-bottom: 8px; }
+    .email-subjects { display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+    .subject-option { background: #eef2ff; color: #3730a3; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+    .email-body { font-size: 13px; line-height: 1.7; color: #374151; white-space: pre-wrap; background: #f8fafc; border-radius: 6px; padding: 12px; }
+    .back-link { display: inline-block; margin-bottom: 16px; color: #3b5bdb; text-decoration: none; font-size: 13px; }
+    .back-link:hover { text-decoration: underline; }
+    .tourist-banner { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px 20px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+    .tourist-banner .icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .tourist-banner strong { display: block; color: #991b1b; margin-bottom: 4px; }
+    .tourist-banner p { font-size: 13px; color: #7f1d1d; line-height: 1.5; }
+    .review-banner { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px 20px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+    .review-banner .icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .review-banner strong { display: block; color: #1e40af; margin-bottom: 4px; }
+    .review-banner p { font-size: 13px; color: #1e3a8a; line-height: 1.5; }
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <a href="/">← Dashboard</a>
+    <h1 style="margin-top:4px">{{ job.fund_name }}</h1>
+  </div>
+</header>
+
+<div class="container">
+
+  {% if job.state == 'rejected_tourist' %}
+  <div class="tourist-banner">
+    <div class="icon">🚫</div>
+    <div>
+      <strong>Tourist Classification — Pipeline Stopped</strong>
+      <p>Gatekeeper scored this deck below the LP-outreach threshold. No emails, deal card, or taxonomy were generated. Internal diagnostics are preserved below.</p>
+    </div>
+  </div>
+  {% elif job.state == 'human_review_pending' %}
+  <div class="review-banner">
+    <div class="icon">👀</div>
+    <div>
+      <strong>Awaiting Human Review</strong>
+      <p>Pipeline complete. All artifacts passed QA. Review the outputs below before approving LP outreach.</p>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Meta -->
+  <div class="card">
+    <h2>Job Overview</h2>
+    <div class="meta-grid">
+      <div class="meta-item"><label>Status</label>
+        <span>
+          {% if job.state == 'human_review_pending' %}<span class="badge badge-blue">Awaiting Review</span>
+          {% elif job.state == 'approved' %}<span class="badge badge-green">Approved</span>
+          {% elif job.state == 'rejected_tourist' %}<span class="badge badge-red">Tourist — Stopped</span>
+          {% elif job.state == 'failed' %}<span class="badge badge-red">Failed</span>
+          {% elif job.state in ['uploaded', 'parsed', 'archived'] %}<span class="badge badge-gray">{{ job.state | capitalize }}</span>
+          {% else %}<span class="badge badge-yellow">{{ job.state | replace('_', ' ') | title }}</span>
+          {% endif %}
+        </span>
+      </div>
+      <div class="meta-item"><label>Job ID</label><span style="font-family:monospace;font-size:12px">{{ job.job_id }}</span></div>
+      <div class="meta-item"><label>Deck File</label><span>{{ job.deck_filename }}</span></div>
+      <div class="meta-item"><label>Created</label><span>{{ job.created_at }}</span></div>
+      <div class="meta-item"><label>Last Updated</label><span>{{ job.last_updated }}</span></div>
+    </div>
+  </div>
+
+  <!-- Gatekeeper -->
+  {% if 'gem1_gatekeeper' in job.artifacts %}
+  {% set gk = job.artifacts.gem1_gatekeeper %}
+  <div class="card">
+    <h2>GEM 1 — Gatekeeper Report</h2>
+    <div class="score-bar">
+      <span class="score-number">{{ gk.total_score }}</span>
+      <span class="score-denom">/ 40</span>
+      <div class="score-fill-wrap">
+        <div class="score-fill" style="width: {{ (gk.total_score / 40 * 100) | int }}%"></div>
+      </div>
+      {% if gk.classification == 'native' %}<span class="badge badge-green">Native</span>
+      {% elif gk.classification == 'high_potential_aspiring' %}<span class="badge badge-blue">High Potential Aspiring</span>
+      {% else %}<span class="badge badge-red">Tourist</span>
+      {% endif %}
+    </div>
+    <div class="pillars">
+      {% for key, label in [('coiled_spring','Coiled Spring'),('inbound_gravity','Inbound Gravity'),('outbound_mechanics','Outbound Mechanics'),('logic_discipline','Logic Discipline')] %}
+      {% if key in gk %}
+      <div class="pillar">
+        <div class="pillar-name">{{ label }}</div>
+        <div class="pillar-score">{{ gk[key].score }} / 10</div>
+        <div class="pillar-diag">{{ gk[key].diagnostic }}</div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% if gk.critical_flaw %}
+    <div style="margin-top:14px; padding:12px 14px; background:#fef9c3; border-radius:6px; font-size:13px; color:#713f12;">
+      <strong>Critical Flaw:</strong> {{ gk.critical_flaw }}
+    </div>
+    {% endif %}
+    {% if gk.pcd_intervention_viable %}
+    <div style="margin-top:10px; padding:12px 14px; background:#f0fdf4; border-radius:6px; font-size:13px; color:#14532d;">
+      <strong>PCD Intervention:</strong> {{ gk.pcd_intervention_detail }}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Analyst Extraction -->
+  {% if 'gem2_extractor' in job.artifacts %}
+  {% set ex = job.artifacts.gem2_extractor %}
+  <div class="card">
+    <h2>GEM 2 — Analyst Extraction</h2>
+    {% if ex.executive_summary %}
+    <div style="font-size:14px;line-height:1.7;color:#374151;margin-bottom:16px;padding:14px;background:#f8fafc;border-radius:6px;">{{ ex.executive_summary }}</div>
+    {% endif %}
+    {% for key, label in [('market_definition','Market Definition'),('strategic_focus','Strategic Focus'),('context_mastery','Context Mastery'),('value_creation','Value Creation'),('coiled_spring','Coiled Spring Evidence'),('inbound_gravity','Inbound Gravity')] %}
+    {% if ex[key] %}
+    <div class="field-row"><span class="field-key">{{ label }}</span><span class="field-val">{{ ex[key] if ex[key] is string else ex[key] | tojson }}</span></div>
+    {% endif %}
+    {% endfor %}
+    {% if ex.information_gaps %}
+    <div style="margin-top:14px;padding:12px 14px;background:#fef9c3;border-radius:6px;font-size:13px;color:#713f12;">
+      <strong>Information Gaps:</strong>
+      <ul style="margin-top:6px;padding-left:18px">{% for g in ex.information_gaps %}<li>{{ g }}</li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+    {% if ex.required_interview_questions %}
+    <div style="margin-top:10px;padding:12px 14px;background:#eff6ff;border-radius:6px;font-size:13px;color:#1e3a8a;">
+      <strong>Interview Questions:</strong>
+      <ul style="margin-top:6px;padding-left:18px">{% for q in ex.required_interview_questions %}<li>{{ q }}</li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Emails -->
+  {% if 'gem3_randy_emails' in job.artifacts %}
+  {% set emails = job.artifacts.gem3_randy_emails %}
+  <div class="card">
+    <h2>GEM 3 — Randy Voice LP Emails</h2>
+    {% for email in emails.emails %}
+    <div class="email-card">
+      <div class="email-label">{{ email.label }} — {{ email.angle | upper }}</div>
+      <div class="email-subjects">
+        <div><span style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px">Subject A: </span><span class="subject-option">{{ email.subject_a }}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px">Subject B: </span><span class="subject-option">{{ email.subject_b }}</span></div>
+      </div>
+      <div class="email-body">{{ email.body }}</div>
+      <div style="font-size:11px;color:#94a3b8;margin-top:8px">{{ email.word_count }} words</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Deal Card -->
+  {% if 'gem5_deal_card' in job.artifacts %}
+  {% set dc = job.artifacts.gem5_deal_card %}
+  <div class="card">
+    <h2>GEM 5 — Deal Card</h2>
+    <div class="meta-grid" style="margin-bottom:16px">
+      <div class="meta-item"><label>Strategy</label><span>{{ dc.strategy_tag }}</span></div>
+      <div class="meta-item"><label>Target Fund Size</label><span>{{ dc.target_fund_size }}</span></div>
+      <div class="meta-item"><label>Geography</label><span>{{ dc.geography }}</span></div>
+      <div class="meta-item"><label>As of</label><span>{{ dc.as_of_date }}</span></div>
+    </div>
+    {% for key, label in [('right_now_window','Right Now Window'),('sourcing_forensics','Sourcing Forensics'),('logic_discipline','Logic Discipline'),('track_record','Track Record')] %}
+    {% if dc[key] %}
+    <div style="margin-bottom:12px;padding:12px 14px;background:#f8fafc;border-radius:6px">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#64748b;font-weight:600;margin-bottom:8px">{{ label }}</div>
+      {% for k, v in dc[key].items() %}
+      <div class="field-row"><span class="field-key">{{ k | replace('_', ' ') | title }}</span><span class="field-val">{{ v }}</span></div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% if dc.action_cta %}
+    <div style="margin-top:12px;padding:12px 16px;background:#1a1a2e;color:white;border-radius:6px;font-size:13px;font-weight:600;text-align:center">{{ dc.action_cta }}</div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Taxonomy -->
+  {% if 'gem4_taxonomy_ted' in job.artifacts %}
+  {% set tax = job.artifacts.gem4_taxonomy_ted %}
+  <div class="card">
+    <h2>GEM 4 — Taxonomy (Ted)</h2>
+    {% if tax.canonical_strategy_tags %}
+    <div style="margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px">
+      {% for tag in tax.canonical_strategy_tags %}<span class="badge badge-blue">{{ tag }}</span>{% endfor %}
+    </div>
+    {% endif %}
+    {% if tax.search_strategy %}
+    <div style="padding:12px 14px;background:#f8fafc;border-radius:6px;font-size:13px">
+      {% if tax.search_strategy.verticals %}<div class="field-row"><span class="field-key">Verticals</span><span class="field-val">{{ tax.search_strategy.verticals | join(', ') }}</span></div>{% endif %}
+      {% if tax.search_strategy.industries %}<div class="field-row"><span class="field-key">Industries</span><span class="field-val">{{ tax.search_strategy.industries | join(', ') }}</span></div>{% endif %}
+      {% if tax.search_strategy.keywords %}<div class="field-row"><span class="field-key">Keywords</span><span class="field-val">{{ tax.search_strategy.keywords | join(', ') }}</span></div>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Evaluators -->
+  {% if 'eval_randy_voice' in job.artifacts or 'eval_cross_gem' in job.artifacts %}
+  <div class="card">
+    <h2>Evaluator Results</h2>
+    {% if 'eval_randy_voice' in job.artifacts %}
+    {% set rv = job.artifacts.eval_randy_voice %}
+    <div style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:10px">Randy Voice Eval —
+        {% if rv.overall_pass %}<span class="badge badge-green">Pass</span>{% else %}<span class="badge badge-red">Revise</span>{% endif %}
+      </div>
+      {% for email_eval in rv.emails_evaluated %}
+      <div style="font-size:12px;padding:8px 12px;background:#f8fafc;border-radius:6px;margin-bottom:6px">
+        <strong>{{ email_eval.label }}</strong> — Voice {{ email_eval.voice_score }}/10 · LP Relevance {{ email_eval.lp_relevance_score }}/10 · CTA {{ email_eval.cta_quality_score }}/10 · Forwardability {{ email_eval.forwardability_score }}/10
+        {% if email_eval.revision_instructions %}<div style="color:#92400e;margin-top:4px">{{ email_eval.revision_instructions }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% if 'eval_cross_gem' in job.artifacts %}
+    {% set cg = job.artifacts.eval_cross_gem %}
+    <div>
+      <div style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:10px">Cross-GEM Consistency —
+        {% if cg.overall_pass %}<span class="badge badge-green">Pass</span>{% else %}<span class="badge badge-red">Issues Found</span>{% endif %}
+      </div>
+      {% for check_name, check_val in cg.checks.items() %}
+      {% if check_val.detected %}
+      <div style="font-size:12px;padding:8px 12px;background:#fef9c3;border-radius:6px;margin-bottom:6px;color:#713f12">
+        <strong>{{ check_name | replace('_', ' ') | title }}:</strong> {{ check_val.detail }}
+      </div>
+      {% endif %}
+      {% endfor %}
+      {% if cg.revision_instructions %}<div style="font-size:12px;padding:10px 12px;background:#fffbeb;border-radius:6px;color:#92400e">{{ cg.revision_instructions }}</div>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Raw Artifacts (collapsed) -->
+  <div class="card">
+    <h2>Raw Artifacts (JSON)</h2>
+    {% for stage_name, data in job.artifacts.items() %}
+    <div class="artifact">
+      <div class="artifact-header" onclick="toggleArtifact(this)">
+        <span class="artifact-title">{{ stage_name }}</span>
+        <span class="artifact-chevron">▶</span>
+      </div>
+      <div class="artifact-body">
+        <pre>{{ data | tojson(indent=2) }}</pre>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Status Log -->
+  <div class="card">
+    <h2>Pipeline Log</h2>
+    <table class="log-table">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Stage</th>
+          <th>Transition</th>
+          <th>Result</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in job.log %}
+        <tr>
+          <td>{{ entry.timestamp[:19] | replace('T', ' ') }}</td>
+          <td>{{ entry.stage_name }}</td>
+          <td>{{ entry.from_state or '—' }} → {{ entry.to_state }}</td>
+          <td class="{% if entry.result == 'success' %}result-ok{% else %}result-fail{% endif %}">{{ entry.result }}</td>
+          <td style="color:#94a3b8;max-width:300px;word-break:break-word">{{ entry.notes or '' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+function toggleArtifact(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.artifact-chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.style.transform = isOpen ? '' : 'rotate(90deg)';
+}
+</script>
+</body>
+</html>

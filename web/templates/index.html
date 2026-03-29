@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCD GEM Engine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; color: #1a1a1a; }
+    header { background: #1a1a2e; color: white; padding: 18px 32px; display: flex; align-items: center; gap: 16px; }
+    header h1 { font-size: 20px; font-weight: 600; letter-spacing: 0.5px; }
+    header span { font-size: 13px; color: #8888aa; }
+    .container { max-width: 1100px; margin: 32px auto; padding: 0 24px; }
+    .card { background: white; border-radius: 10px; padding: 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 24px; }
+    .card h2 { font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 18px; }
+    /* Upload zone */
+    .upload-zone { border: 2px dashed #cbd5e1; border-radius: 8px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.2s; }
+    .upload-zone:hover, .upload-zone.drag-over { border-color: #3b5bdb; background: #eef2ff; }
+    .upload-zone input { display: none; }
+    .upload-zone p { color: #64748b; font-size: 14px; margin-top: 8px; }
+    .upload-zone .icon { font-size: 36px; margin-bottom: 8px; }
+    .btn { display: inline-block; padding: 10px 20px; background: #3b5bdb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+    .btn:hover { background: #2f4ac0; }
+    .btn:disabled { background: #94a3b8; cursor: not-allowed; }
+    /* Progress */
+    #upload-progress { display: none; margin-top: 16px; }
+    .progress-bar-wrap { background: #e2e8f0; border-radius: 999px; height: 6px; margin-top: 8px; }
+    .progress-bar { background: #3b5bdb; height: 6px; border-radius: 999px; width: 0%; transition: width 0.3s; animation: pulse-progress 1.5s ease-in-out infinite; }
+    @keyframes pulse-progress { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+    .status-msg { font-size: 13px; color: #475569; margin-top: 6px; }
+    /* Jobs table */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { text-align: left; padding: 10px 12px; border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    td { padding: 12px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+    a.job-link { color: #3b5bdb; text-decoration: none; font-weight: 500; }
+    a.job-link:hover { text-decoration: underline; }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+    .badge-yellow { background: #fef9c3; color: #854d0e; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-gray { background: #f1f5f9; color: #475569; }
+    .empty-state { text-align: center; padding: 48px; color: #94a3b8; font-size: 14px; }
+    .toast { display: none; position: fixed; bottom: 24px; right: 24px; background: #1e293b; color: white; padding: 12px 20px; border-radius: 8px; font-size: 13px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  </style>
+</head>
+<body>
+<header>
+  <h1>PCD GEM Engine</h1>
+  <span>GP Deck Processing Pipeline</span>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Upload a Fund Manager Deck</h2>
+    <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <div class="icon">📄</div>
+      <strong>Drop a PDF here or click to browse</strong>
+      <p>Supported: Fund manager decks in PDF format</p>
+      <input type="file" id="file-input" accept=".pdf">
+    </div>
+    <div id="upload-progress">
+      <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+      <div class="status-msg" id="status-msg">Uploading...</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Pipeline Jobs</h2>
+    {% if jobs %}
+    <table>
+      <thead>
+        <tr>
+          <th>Fund</th>
+          <th>State</th>
+          <th>Created</th>
+          <th>Updated</th>
+          <th>Job ID</th>
+        </tr>
+      </thead>
+      <tbody id="jobs-tbody">
+        {% for job in jobs %}
+        <tr>
+          <td><a class="job-link" href="/jobs/{{ job.job_id }}">{{ job.fund_name }}</a></td>
+          <td>
+            {% if job.state == 'human_review_pending' %}<span class="badge badge-blue">Awaiting Review</span>
+            {% elif job.state == 'approved' %}<span class="badge badge-green">Approved</span>
+            {% elif job.state == 'rejected_tourist' %}<span class="badge badge-red">Tourist — Stopped</span>
+            {% elif job.state == 'failed' %}<span class="badge badge-red">Failed</span>
+            {% elif job.state in ['uploaded', 'parsed', 'archived'] %}<span class="badge badge-gray">{{ job.state | capitalize }}</span>
+            {% else %}<span class="badge badge-yellow">{{ job.state | replace('_', ' ') | title }}</span>
+            {% endif %}
+          </td>
+          <td>{{ job.created_at }}</td>
+          <td>{{ job.last_updated }}</td>
+          <td style="font-family: monospace; font-size: 12px; color: #94a3b8;">{{ job.job_id }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state" id="empty-state">No jobs yet — upload a deck to get started.</div>
+    {% endif %}
+  </div>
+
+  <!-- GP Records (from Supabase gp_pipeline) -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;border-bottom:1px solid #f1f5f9;padding-bottom:12px">
+      <h2 style="margin:0;border:none;padding:0">GP Registry</h2>
+      <a href="/gp/new" class="btn" style="text-decoration:none;padding:8px 16px;font-size:13px">+ New GP</a>
+    </div>
+    {% if gp_records %}
+    <table>
+      <thead>
+        <tr>
+          <th>GP Name</th>
+          <th>Contact</th>
+          <th>Score</th>
+          <th>Status</th>
+          <th>Payment</th>
+          <th>Account Owner</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for gp in gp_records %}
+        <tr>
+          <td style="font-weight:500"><a href="/gp/{{ gp.id }}" class="job-link">{{ gp.gp_name }}</a></td>
+          <td>
+            {% if gp.contact_first_name %}{{ gp.contact_first_name }} {{ gp.contact_last_name or '' }}{% else %}<span style="color:#94a3b8">—</span>{% endif %}
+            {% if gp.contact_email %}<br><span style="font-size:11px;color:#64748b">{{ gp.contact_email }}</span>{% endif %}
+          </td>
+          <td>
+            {% if gp.gatekeeper_score is not none %}
+            <strong>{{ gp.gatekeeper_score }}</strong>/40
+            {% else %}<span style="color:#94a3b8">—</span>{% endif %}
+          </td>
+          <td>
+            {% if gp.pipeline_state == 'human_review_pending' %}<span class="badge badge-blue">Review</span>
+            {% elif gp.pipeline_state == 'rejected_tourist' %}<span class="badge badge-red">Tourist</span>
+            {% elif gp.pipeline_state == 'approved' %}<span class="badge badge-green">Approved</span>
+            {% elif gp.pipeline_state %}<span class="badge badge-yellow">{{ gp.pipeline_state | replace('_', ' ') | title }}</span>
+            {% else %}<span style="color:#94a3b8">—</span>{% endif %}
+          </td>
+          <td>
+            {% if gp.payment_status == 'Verified' %}<span class="badge badge-green">Verified</span>
+            {% elif gp.payment_status == 'Pending' %}<span class="badge badge-yellow">Pending</span>
+            {% else %}<span style="color:#94a3b8">—</span>{% endif %}
+          </td>
+          <td style="font-size:12px;color:#64748b">{{ gp.account_owner or 'Randy Mitchell' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">No GP records yet — click <strong>+ New GP</strong> to onboard a fund manager.</div>
+    {% endif %}
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function stateBadge(state) {
+  const map = {
+    human_review_pending: ['blue', 'Awaiting Review'],
+    approved: ['green', 'Approved'],
+    rejected_tourist: ['red', 'Tourist — Stopped'],
+    failed: ['red', 'Failed'],
+    uploaded: ['gray', 'Uploaded'],
+    parsed: ['gray', 'Parsed'],
+    gatekeeper_complete: ['yellow', 'Gatekeeper Done'],
+    analyst_complete: ['yellow', 'Analyst Done'],
+    angle_brief_complete: ['yellow', 'Angle Brief Done'],
+    taxonomy_complete: ['yellow', 'Taxonomy Done'],
+    deal_card_complete: ['yellow', 'Deal Card Done'],
+    email_drafts_complete: ['yellow', 'Emails Done'],
+    randy_eval_complete: ['yellow', 'Randy Eval Done'],
+    cross_gem_eval_complete: ['yellow', 'Cross-GEM Done'],
+    regeneration_required: ['yellow', 'Regen Required'],
+    regenerated: ['yellow', 'Regenerated'],
+    archived: ['gray', 'Archived'],
+  };
+  const [cls, label] = map[state] || ['gray', state];
+  return `<span class="badge badge-${cls}">${label}</span>`;
+}
+
+// Drag and drop
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) uploadFile(file);
+});
+document.getElementById('file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) uploadFile(file);
+});
+
+function showToast(msg, duration = 4000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', duration);
+}
+
+function setStatus(msg) {
+  document.getElementById('status-msg').textContent = msg;
+}
+
+let pollingInterval = null;
+
+async function uploadFile(file) {
+  if (!file.name.toLowerCase().endsWith('.pdf')) {
+    showToast('Only PDF files are accepted.');
+    return;
+  }
+  const progress = document.getElementById('upload-progress');
+  const bar = document.getElementById('progress-bar');
+  progress.style.display = 'block';
+  bar.style.width = '15%';
+  setStatus(`Uploading ${file.name}...`);
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  let trackingId;
+  try {
+    const res = await fetch('/upload', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (data.error) { setStatus('Error: ' + data.error); return; }
+    trackingId = data.tracking_id;
+    bar.style.width = '30%';
+    setStatus('Running GEM pipeline — this takes 2–3 minutes...');
+  } catch (err) {
+    setStatus('Upload failed: ' + err);
+    return;
+  }
+
+  // Poll for completion
+  pollingInterval = setInterval(async () => {
+    try {
+      const res = await fetch(`/api/tracking/${trackingId}`);
+      const data = await res.json();
+      if (data.status === 'running') {
+        // Nudge the progress bar to show activity
+        const cur = parseFloat(bar.style.width) || 30;
+        if (cur < 85) bar.style.width = (cur + 3) + '%';
+        // Refresh job list
+        refreshJobList();
+      } else {
+        clearInterval(pollingInterval);
+        bar.style.width = '100%';
+        bar.style.animation = 'none';
+        bar.style.background = '#22c55e';
+        setStatus('Pipeline complete.');
+        refreshJobList();
+        if (data.latest_job) {
+          setTimeout(() => {
+            window.location.href = `/jobs/${data.latest_job.job_id}`;
+          }, 800);
+        }
+      }
+    } catch (e) { /* network blip, keep polling */ }
+  }, 2500);
+}
+
+async function refreshJobList() {
+  try {
+    const res = await fetch('/api/jobs');
+    const jobs = await res.json();
+    const tbody = document.getElementById('jobs-tbody');
+    const empty = document.getElementById('empty-state');
+    if (!jobs.length) return;
+    if (empty) empty.style.display = 'none';
+    if (!tbody) {
+      // Table doesn't exist yet, reload page
+      location.reload();
+      return;
+    }
+    tbody.innerHTML = jobs.map(job => `
+      <tr>
+        <td><a class="job-link" href="/jobs/${job.job_id}">${job.fund_name}</a></td>
+        <td>${stateBadge(job.state)}</td>
+        <td>${job.created_at}</td>
+        <td>${job.last_updated}</td>
+        <td style="font-family:monospace;font-size:12px;color:#94a3b8">${job.job_id}</td>
+      </tr>
+    `).join('');
+  } catch (e) {}
+}
+
+// Auto-refresh job list every 5s if jobs are in progress
+setInterval(refreshJobList, 5000);
+</script>
+
+
+</body>
+</html>

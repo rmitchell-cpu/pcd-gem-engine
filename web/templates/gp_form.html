@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if mode == 'edit' %}Edit {{ gp.gp_name }}{% else %}New GP Record{% endif %} — PCD GEM Engine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; color: #1a1a1a; }
+    header { background: #1a1a2e; color: white; padding: 18px 32px; display: flex; align-items: center; gap: 16px; }
+    header a { color: #8888aa; text-decoration: none; font-size: 13px; }
+    header a:hover { color: white; }
+    header h1 { font-size: 20px; font-weight: 600; margin-top: 4px; }
+    .container { max-width: 800px; margin: 32px auto; padding: 0 24px; }
+    .card { background: white; border-radius: 10px; padding: 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 20px; }
+    .card h2 { font-size: 15px; font-weight: 600; color: #1a1a2e; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 0; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; font-weight: 600; margin-bottom: 6px; }
+    input, select { width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px; color: #1e293b; background: white; font-family: inherit; transition: border-color 0.15s; }
+    input:focus, select:focus { outline: none; border-color: #3b5bdb; box-shadow: 0 0 0 3px rgba(59,91,219,0.1); }
+    input::placeholder { color: #cbd5e1; }
+    .btn { display: inline-block; padding: 10px 24px; background: #3b5bdb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+    .btn:hover { background: #2f4ac0; }
+    .btn-secondary { background: #e2e8f0; color: #475569; }
+    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-danger { background: #ef4444; }
+    .btn-danger:hover { background: #dc2626; }
+    .actions { display: flex; gap: 12px; margin-top: 24px; align-items: center; }
+    .actions .spacer { flex: 1; }
+    .hint { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+    .section-label { font-size: 13px; font-weight: 600; color: #1a1a2e; margin: 20px 0 12px; padding-top: 16px; border-top: 1px solid #f1f5f9; grid-column: 1 / -1; }
+    /* Travel dates */
+    .travel-row { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 8px; align-items: end; margin-bottom: 8px; }
+    .travel-row input { font-size: 13px; padding: 8px 10px; }
+    .remove-travel { background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 18px; padding: 8px; line-height: 1; }
+    .remove-travel:hover { color: #ef4444; }
+    .add-travel { background: none; border: 1px dashed #cbd5e1; color: #64748b; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; font-family: inherit; }
+    .add-travel:hover { border-color: #3b5bdb; color: #3b5bdb; }
+    /* Currency display */
+    .input-prefix { position: relative; }
+    .input-prefix span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px; pointer-events: none; }
+    .input-prefix input { padding-left: 36px; }
+    /* Percentage display */
+    .input-suffix { position: relative; }
+    .input-suffix span { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px; pointer-events: none; }
+    .input-suffix input { padding-right: 28px; }
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <a href="/">← Dashboard</a>
+    {% if mode == 'edit' and gp %}
+    <span style="color:#475569;margin:0 8px">·</span>
+    <a href="/gp/{{ gp.id }}">← {{ gp.gp_name }}</a>
+    {% endif %}
+    <h1>{% if mode == 'edit' %}Edit GP Record{% else %}Onboard New Fund Manager{% endif %}</h1>
+  </div>
+</header>
+
+<div class="container">
+  <form action="/gp/save" method="POST">
+    {% if gp and gp.id %}
+    <input type="hidden" name="gp_id" value="{{ gp.id }}">
+    {% endif %}
+
+    <!-- Identity -->
+    <div class="card">
+      <h2>Fund Manager Details</h2>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>GP / Fund Name *</label>
+          <input type="text" name="gp_name" value="{{ gp.gp_name if gp else '' }}" required placeholder="e.g. Adamantem Capital">
+        </div>
+
+        <div class="form-group">
+          <label>Account Owner</label>
+          <input type="text" name="account_owner" value="{{ gp.account_owner if gp else 'Randy Mitchell' }}" placeholder="Randy Mitchell">
+        </div>
+
+        <div class="form-group">
+          <label>Start Date</label>
+          <input type="date" name="start_date" value="{{ gp.start_date if gp and gp.start_date else '' }}">
+          <div class="hint">DD Month YYYY — when engagement begins</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="card">
+      <h2>Contact Person</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" name="contact_first_name" value="{{ gp.contact_first_name if gp and gp.contact_first_name else '' }}" placeholder="Jane">
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" name="contact_last_name" value="{{ gp.contact_last_name if gp and gp.contact_last_name else '' }}" placeholder="Smith">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="contact_email" value="{{ gp.contact_email if gp and gp.contact_email else '' }}" placeholder="jane@fundmanager.com">
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" name="contact_phone" value="{{ gp.contact_phone if gp and gp.contact_phone else '' }}" placeholder="+1 (555) 123-4567">
+        </div>
+      </div>
+    </div>
+
+    <!-- Financials -->
+    <div class="card">
+      <h2>Financials</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Subscription Price</label>
+          <div class="input-prefix">
+            <span>US$</span>
+            <input type="number" step="0.01" name="sub_price_usd" value="{{ gp.sub_price_usd if gp and gp.sub_price_usd else '' }}" placeholder="0.00">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Fund II Net IRR</label>
+          <div class="input-suffix">
+            <input type="number" step="0.01" name="fund_ii_net_irr" value="{{ gp.fund_ii_net_irr if gp and gp.fund_ii_net_irr else '' }}" placeholder="0.00">
+            <span>%</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Payment Status</label>
+          <select name="payment_status">
+            <option value="Pending" {% if not gp or gp.payment_status == 'Pending' %}selected{% endif %}>Pending</option>
+            <option value="Verified" {% if gp and gp.payment_status == 'Verified' %}selected{% endif %}>Verified</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Travel Dates -->
+    <div class="card">
+      <h2>Pending Travel</h2>
+      <div id="travel-container">
+        <div style="margin-bottom:8px">
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;font-weight:600;padding:0 0 4px;">
+            <span>City</span><span>Start Date</span><span>End Date</span><span></span>
+          </div>
+        </div>
+        {% if gp and gp.travel_dates %}
+          {% for trip in gp.travel_dates %}
+          <div class="travel-row">
+            <input type="text" name="travel_city" value="{{ trip.city }}" placeholder="City">
+            <input type="date" name="travel_start" value="{{ trip.start_date or '' }}">
+            <input type="date" name="travel_end" value="{{ trip.end_date or '' }}">
+            <button type="button" class="remove-travel" onclick="this.parentElement.remove()" title="Remove">&times;</button>
+          </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <button type="button" class="add-travel" onclick="addTravelRow()">+ Add Travel Date</button>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button type="submit" class="btn">
+        {% if mode == 'edit' %}Save Changes{% else %}Create GP Record{% endif %}
+      </button>
+      <a href="{% if gp %}/gp/{{ gp.id }}{% else %}/{% endif %}" class="btn btn-secondary" style="text-decoration:none">Cancel</a>
+    </div>
+
+  </form>
+</div>
+
+<script>
+function addTravelRow() {
+  const container = document.getElementById('travel-container');
+  const row = document.createElement('div');
+  row.className = 'travel-row';
+  row.innerHTML = `
+    <input type="text" name="travel_city" placeholder="City">
+    <input type="date" name="travel_start">
+    <input type="date" name="travel_end">
+    <button type="button" class="remove-travel" onclick="this.parentElement.remove()" title="Remove">&times;</button>
+  `;
+  container.appendChild(row);
+}
+
+// If no travel rows exist on create mode, add one empty row
+{% if not gp or not gp.travel_dates %}
+document.addEventListener('DOMContentLoaded', function() {
+  // Start with no rows — user clicks + to add
+});
+{% endif %}
+</script>
+</body>
+</html>

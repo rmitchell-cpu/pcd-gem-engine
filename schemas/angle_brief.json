@@ -1,0 +1,116 @@
+{
+  "$defs": {
+    "AnglePrimary": {
+      "enum": [
+        "fit_relevance",
+        "differentiated_edge",
+        "proof_repeatability",
+        "right_now_timing",
+        "short_forwardable_summary"
+      ],
+      "title": "AnglePrimary",
+      "type": "string"
+    },
+    "CTAType": {
+      "enum": [
+        "fit_check",
+        "offer_summary",
+        "offer_deck",
+        "redirect_to_teammate",
+        "offer_intro_if_useful"
+      ],
+      "title": "CTAType",
+      "type": "string"
+    },
+    "GatekeeperContext": {
+      "properties": {
+        "classification": {
+          "title": "Classification",
+          "type": "string"
+        },
+        "assertiveness_guidance": {
+          "title": "Assertiveness Guidance",
+          "type": "string"
+        },
+        "should_generate_outreach": {
+          "title": "Should Generate Outreach",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "classification",
+        "assertiveness_guidance",
+        "should_generate_outreach"
+      ],
+      "title": "GatekeeperContext",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "gatekeeper_context": {
+      "$ref": "#/$defs/GatekeeperContext"
+    },
+    "primary_angle": {
+      "$ref": "#/$defs/AnglePrimary"
+    },
+    "angle_rationale": {
+      "title": "Angle Rationale",
+      "type": "string"
+    },
+    "top_points_to_surface": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "title": "Top Points To Surface",
+      "type": "array"
+    },
+    "points_to_avoid_or_deemphasize": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 2,
+      "title": "Points To Avoid Or Deemphasize",
+      "type": "array"
+    },
+    "forwardable_sentence_goal": {
+      "title": "Forwardable Sentence Goal",
+      "type": "string"
+    },
+    "recommended_cta_type": {
+      "$ref": "#/$defs/CTAType"
+    },
+    "subject_line_direction": {
+      "title": "Subject Line Direction",
+      "type": "string"
+    },
+    "tone_guidance_for_gem3": {
+      "title": "Tone Guidance For Gem3",
+      "type": "string"
+    },
+    "constraints_for_gem3": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 4,
+      "minItems": 2,
+      "title": "Constraints For Gem3",
+      "type": "array"
+    }
+  },
+  "required": [
+    "gatekeeper_context",
+    "primary_angle",
+    "angle_rationale",
+    "top_points_to_surface",
+    "points_to_avoid_or_deemphasize",
+    "forwardable_sentence_goal",
+    "recommended_cta_type",
+    "subject_line_direction",
+    "tone_guidance_for_gem3",
+    "constraints_for_gem3"
+  ],
+  "title": "AngleBrief",
+  "type": "object"
+}

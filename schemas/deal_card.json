@@ -1,0 +1,133 @@
+{
+  "$defs": {
+    "DealCardLogicDiscipline": {
+      "properties": {
+        "cost_of_capital": {
+          "title": "Cost Of Capital",
+          "type": "string"
+        },
+        "binding_constraints": {
+          "title": "Binding Constraints",
+          "type": "string"
+        },
+        "discipline_evidence": {
+          "title": "Discipline Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cost_of_capital",
+        "binding_constraints",
+        "discipline_evidence"
+      ],
+      "title": "DealCardLogicDiscipline",
+      "type": "object"
+    },
+    "RightNowWindow": {
+      "properties": {
+        "dislocation": {
+          "title": "Dislocation",
+          "type": "string"
+        },
+        "catalyst": {
+          "title": "Catalyst",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dislocation",
+        "catalyst"
+      ],
+      "title": "RightNowWindow",
+      "type": "object"
+    },
+    "SourcingForensics": {
+      "properties": {
+        "receipts": {
+          "title": "Receipts",
+          "type": "string"
+        },
+        "mechanism": {
+          "title": "Mechanism",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receipts",
+        "mechanism"
+      ],
+      "title": "SourcingForensics",
+      "type": "object"
+    },
+    "TrackRecord": {
+      "properties": {
+        "performance": {
+          "title": "Performance",
+          "type": "string"
+        },
+        "fund_terms": {
+          "title": "Fund Terms",
+          "type": "string"
+        }
+      },
+      "required": [
+        "performance",
+        "fund_terms"
+      ],
+      "title": "TrackRecord",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "fund_name": {
+      "title": "Fund Name",
+      "type": "string"
+    },
+    "strategy_tag": {
+      "title": "Strategy Tag",
+      "type": "string"
+    },
+    "target_fund_size": {
+      "title": "Target Fund Size",
+      "type": "string"
+    },
+    "geography": {
+      "title": "Geography",
+      "type": "string"
+    },
+    "as_of_date": {
+      "title": "As Of Date",
+      "type": "string"
+    },
+    "right_now_window": {
+      "$ref": "#/$defs/RightNowWindow"
+    },
+    "sourcing_forensics": {
+      "$ref": "#/$defs/SourcingForensics"
+    },
+    "logic_discipline": {
+      "$ref": "#/$defs/DealCardLogicDiscipline"
+    },
+    "track_record": {
+      "$ref": "#/$defs/TrackRecord"
+    },
+    "action_cta": {
+      "title": "Action Cta",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fund_name",
+    "strategy_tag",
+    "target_fund_size",
+    "geography",
+    "as_of_date",
+    "right_now_window",
+    "sourcing_forensics",
+    "logic_discipline",
+    "track_record",
+    "action_cta"
+  ],
+  "title": "DealCard",
+  "type": "object"
+}

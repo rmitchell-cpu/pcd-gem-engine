@@ -1,0 +1,97 @@
+{
+  "$defs": {
+    "CrossGEMChecks": {
+      "properties": {
+        "strategy_drift": {
+          "$ref": "#/$defs/DriftCheck"
+        },
+        "urgency_drift": {
+          "$ref": "#/$defs/DriftCheck"
+        },
+        "sourcing_edge_drift": {
+          "$ref": "#/$defs/DriftCheck"
+        },
+        "unsupported_claims": {
+          "$ref": "#/$defs/DriftCheck"
+        },
+        "formatting_violations": {
+          "$ref": "#/$defs/DriftCheck"
+        },
+        "classification_misalignment": {
+          "$ref": "#/$defs/DriftCheck"
+        }
+      },
+      "title": "CrossGEMChecks",
+      "type": "object"
+    },
+    "DriftCheck": {
+      "properties": {
+        "detected": {
+          "default": false,
+          "title": "Detected",
+          "type": "boolean"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detail"
+        }
+      },
+      "title": "DriftCheck",
+      "type": "object"
+    },
+    "EvalDecision": {
+      "enum": [
+        "pass",
+        "revise"
+      ],
+      "title": "EvalDecision",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "overall_pass": {
+      "title": "Overall Pass",
+      "type": "boolean"
+    },
+    "checks": {
+      "$ref": "#/$defs/CrossGEMChecks"
+    },
+    "artifacts_requiring_repair": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Artifacts Requiring Repair",
+      "type": "array"
+    },
+    "decision": {
+      "$ref": "#/$defs/EvalDecision"
+    },
+    "revision_instructions": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revision Instructions"
+    }
+  },
+  "required": [
+    "overall_pass",
+    "checks",
+    "decision"
+  ],
+  "title": "CrossGEMEvalOutput",
+  "type": "object"
+}

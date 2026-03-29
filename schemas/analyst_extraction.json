@@ -1,0 +1,293 @@
+{
+  "$defs": {
+    "InboundGravityDetail": {
+      "properties": {
+        "claim": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Claim"
+        },
+        "receipts": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Receipts"
+        }
+      },
+      "title": "InboundGravityDetail",
+      "type": "object"
+    },
+    "LogicDisciplineDetail": {
+      "properties": {
+        "cost_of_capital": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost Of Capital"
+        },
+        "binding_constraints": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Binding Constraints"
+        },
+        "hard_no_story": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hard No Story"
+        }
+      },
+      "title": "LogicDisciplineDetail",
+      "type": "object"
+    },
+    "OutboundMechanicsDetail": {
+      "properties": {
+        "chain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chain"
+        },
+        "intersection": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Intersection"
+        },
+        "why_they_win": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Why They Win"
+        }
+      },
+      "title": "OutboundMechanicsDetail",
+      "type": "object"
+    },
+    "RedFlagDetail": {
+      "properties": {
+        "key_person_risk": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key Person Risk"
+        },
+        "fee_structure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fee Structure"
+        },
+        "track_record_ambiguity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Track Record Ambiguity"
+        }
+      },
+      "title": "RedFlagDetail",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "fund_name": {
+      "title": "Fund Name",
+      "type": "string"
+    },
+    "executive_summary": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Executive Summary"
+    },
+    "market_definition": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Market Definition"
+    },
+    "strategic_focus": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Strategic Focus"
+    },
+    "context_mastery": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Context Mastery"
+    },
+    "recurring_patterns": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Recurring Patterns"
+    },
+    "value_creation": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Value Creation"
+    },
+    "coiled_spring": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Coiled Spring"
+    },
+    "cyclical_awareness": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cyclical Awareness"
+    },
+    "inbound_gravity": {
+      "$ref": "#/$defs/InboundGravityDetail"
+    },
+    "outbound_mechanics": {
+      "$ref": "#/$defs/OutboundMechanicsDetail"
+    },
+    "red_flags": {
+      "$ref": "#/$defs/RedFlagDetail"
+    },
+    "logic_discipline": {
+      "$ref": "#/$defs/LogicDisciplineDetail"
+    },
+    "required_interview_questions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Interview Questions",
+      "type": "array"
+    },
+    "information_gaps": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Information Gaps",
+      "type": "array"
+    }
+  },
+  "required": [
+    "fund_name"
+  ],
+  "title": "AnalystExtraction",
+  "type": "object"
+}

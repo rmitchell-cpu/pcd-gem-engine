@@ -1,0 +1,21 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+
+# Jobs (local filesystem cache — data lives in Supabase)
+jobs/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
