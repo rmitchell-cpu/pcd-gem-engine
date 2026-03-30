@@ -239,11 +239,11 @@ async def dashboard(request: Request):
     try:
         jobs = _list_jobs()
         gp_records = _list_gp_records()
-        return templates.TemplateResponse("index.html", {
+        return templates.TemplateResponse("index.html", context={
             "request": request,
             "jobs": jobs,
             "gp_records": gp_records,
-        })
+        }, request=request)
     except Exception as e:
         import traceback
         return HTMLResponse(f"<pre>{traceback.format_exc()}</pre>", status_code=500)
@@ -254,7 +254,7 @@ async def job_detail(request: Request, job_id: str):
     detail = _get_job_detail(job_id)
     if detail is None:
         return HTMLResponse("<h1>Job not found</h1>", status_code=404)
-    return templates.TemplateResponse("job.html", {"request": request, "job": detail})
+    return templates.TemplateResponse("job.html", context={"request": request, "job": detail}, request=request)
 
 
 # ---------------------------------------------------------------------------
@@ -338,11 +338,7 @@ def _sb_write():
 @app.get("/gp/new", response_class=HTMLResponse)
 async def gp_new_form(request: Request):
     try:
-        return templates.TemplateResponse("gp_form.html", {
-            "request": request,
-            "gp": None,
-            "mode": "create",
-        })
+        return templates.TemplateResponse("gp_form.html", context={"request": request, "gp": None, "mode": "create"}, request=request)
     except Exception as e:
         import traceback
         return HTMLResponse(f"<pre>{traceback.format_exc()}</pre>", status_code=500)
@@ -358,11 +354,7 @@ async def gp_edit_form(request: Request, gp_id: str):
         gp = result.data
     except Exception:
         return HTMLResponse("<h1>GP record not found</h1>", status_code=404)
-    return templates.TemplateResponse("gp_form.html", {
-        "request": request,
-        "gp": gp,
-        "mode": "edit",
-    })
+    return templates.TemplateResponse("gp_form.html", context={"request": request, "gp": gp, "mode": "edit"}, request=request)
 
 
 @app.get("/gp/{gp_id}", response_class=HTMLResponse)
@@ -384,11 +376,7 @@ async def gp_detail(request: Request, gp_id: str):
     except Exception:
         pass
 
-    return templates.TemplateResponse("gp_detail.html", {
-        "request": request,
-        "gp": gp,
-        "jobs": jobs,
-    })
+    return templates.TemplateResponse("gp_detail.html", context={"request": request, "gp": gp, "jobs": jobs}, request=request)
 
 
 @app.post("/gp/save")
