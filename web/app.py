@@ -21,7 +21,7 @@ from config.settings import JOBS_DIR
 from src.orchestrator import run_pipeline
 from src.persistence import load_manifest
 
-app = FastAPI(title="PCD GEM Engine")
+app = FastAPI(title="PCD GEM Engine", debug=True)
 templates = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
 
 # In-memory tracking for running jobs
@@ -236,13 +236,17 @@ def _run_pipeline_background(job_temp_path: str, original_filename: str, trackin
 
 @app.get("/", response_class=HTMLResponse)
 async def dashboard(request: Request):
-    jobs = _list_jobs()
-    gp_records = _list_gp_records()
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "jobs": jobs,
-        "gp_records": gp_records,
-    })
+    try:
+        jobs = _list_jobs()
+        gp_records = _list_gp_records()
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "jobs": jobs,
+            "gp_records": gp_records,
+        })
+    except Exception as e:
+        import traceback
+        return HTMLResponse(f"<pre>{traceback.format_exc()}</pre>", status_code=500)
 
 
 @app.get("/jobs/{job_id}", response_class=HTMLResponse)
@@ -333,11 +337,15 @@ def _sb_write():
 
 @app.get("/gp/new", response_class=HTMLResponse)
 async def gp_new_form(request: Request):
-    return templates.TemplateResponse("gp_form.html", {
-        "request": request,
-        "gp": None,
-        "mode": "create",
-    })
+    try:
+        return templates.TemplateResponse("gp_form.html", {
+            "request": request,
+            "gp": None,
+            "mode": "create",
+        })
+    except Exception as e:
+        import traceback
+        return HTMLResponse(f"<pre>{traceback.format_exc()}</pre>", status_code=500)
 
 
 @app.get("/gp/{gp_id}/edit", response_class=HTMLResponse)
