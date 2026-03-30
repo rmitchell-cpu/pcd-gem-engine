@@ -231,6 +231,26 @@ def run_stage(
                     retry_count=attempt,
                 )
 
+        except anthropic.RateLimitError as e:
+            # Rate limited — wait and retry (up to 3 times)
+            import time
+            rate_retries = getattr(run_stage, '_rate_retries', 0)
+            if rate_retries < 3:
+                run_stage._rate_retries = rate_retries + 1
+                wait = 30 * (rate_retries + 1)  # 30s, 60s, 90s
+                print(f"  [rate-limit] Waiting {wait}s before retry ({rate_retries + 1}/3)...")
+                time.sleep(wait)
+                continue  # Retry the same attempt
+            return StageResult(
+                stage_name=stage_name,
+                success=False,
+                error=f"Rate limit exceeded after retries: {str(e)}",
+                model_version=MODEL,
+                prompt_hash=p_hash,
+                timestamp=datetime.utcnow(),
+                retry_count=attempt,
+            )
+
         except anthropic.APIError as e:
             return StageResult(
                 stage_name=stage_name,
