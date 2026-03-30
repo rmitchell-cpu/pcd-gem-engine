@@ -250,10 +250,14 @@ async def dashboard(request: Request):
 
 @app.get("/jobs/{job_id}", response_class=HTMLResponse)
 async def job_detail(request: Request, job_id: str):
-    detail = _get_job_detail(job_id)
-    if detail is None:
-        return HTMLResponse("<h1>Job not found</h1>", status_code=404)
-    return templates.TemplateResponse(request, "job.html", {"job": detail})
+    try:
+        detail = _get_job_detail(job_id)
+        if detail is None:
+            return HTMLResponse("<h1>Job not found</h1>", status_code=404)
+        return templates.TemplateResponse(request, "job.html", {"job": detail})
+    except Exception as e:
+        import traceback
+        return HTMLResponse(f"<pre>{traceback.format_exc()}</pre>", status_code=500)
 
 
 # ---------------------------------------------------------------------------
@@ -345,37 +349,39 @@ async def gp_new_form(request: Request):
 
 @app.get("/gp/{gp_id}/edit", response_class=HTMLResponse)
 async def gp_edit_form(request: Request, gp_id: str):
-    sb = _sb_read()
-    if not sb:
-        return HTMLResponse("<h1>Supabase unavailable</h1>", status_code=500)
     try:
+        sb = _sb_read()
+        if not sb:
+            return HTMLResponse("<h1>Supabase unavailable</h1>", status_code=500)
         result = sb.table("gp_pipeline").select("*").eq("id", gp_id).single().execute()
         gp = result.data
-    except Exception:
-        return HTMLResponse("<h1>GP record not found</h1>", status_code=404)
-    return templates.TemplateResponse(request, "gp_form.html", {"gp": gp, "mode": "edit"})
+        return templates.TemplateResponse(request, "gp_form.html", {"gp": gp, "mode": "edit"})
+    except Exception as e:
+        import traceback
+        return HTMLResponse(f"<pre>{traceback.format_exc()}</pre>", status_code=500)
 
 
 @app.get("/gp/{gp_id}", response_class=HTMLResponse)
 async def gp_detail(request: Request, gp_id: str):
-    sb = _sb_read()
-    if not sb:
-        return HTMLResponse("<h1>Supabase unavailable</h1>", status_code=500)
     try:
+        sb = _sb_read()
+        if not sb:
+            return HTMLResponse("<h1>Supabase unavailable</h1>", status_code=500)
         gp_res = sb.table("gp_pipeline").select("*").eq("id", gp_id).single().execute()
         gp = gp_res.data
-    except Exception:
-        return HTMLResponse("<h1>GP record not found</h1>", status_code=404)
 
-    # Get associated pipeline jobs
-    jobs = []
-    try:
-        jobs_res = sb.table("gem_jobs").select("*").eq("gp_id", gp_id).order("created_at", desc=True).execute()
-        jobs = jobs_res.data or []
-    except Exception:
-        pass
+        # Get associated pipeline jobs
+        jobs = []
+        try:
+            jobs_res = sb.table("gem_jobs").select("*").eq("gp_id", gp_id).order("created_at", desc=True).execute()
+            jobs = jobs_res.data or []
+        except Exception:
+            pass
 
-    return templates.TemplateResponse(request, "gp_detail.html", {"gp": gp, "jobs": jobs})
+        return templates.TemplateResponse(request, "gp_detail.html", {"gp": gp, "jobs": jobs})
+    except Exception as e:
+        import traceback
+        return HTMLResponse(f"<pre>{traceback.format_exc()}</pre>", status_code=500)
 
 
 @app.post("/gp/save")
