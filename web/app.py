@@ -110,9 +110,12 @@ def _get_job_detail(job_id: str) -> Optional[dict]:
             art_res = sb.table("gem_artifacts").select("stage_name, data").eq("job_id", job_id).order("created_at").execute()
             artifacts = {row["stage_name"]: row["data"] for row in art_res.data}
 
-            # Log
+            # Log — normalize created_at → timestamp for template compatibility
             log_res = sb.table("gem_status_log").select("*").eq("job_id", job_id).order("created_at").execute()
-            log_entries = log_res.data or []
+            log_entries = []
+            for row in (log_res.data or []):
+                row["timestamp"] = row.get("created_at", "")
+                log_entries.append(row)
 
             # GP pipeline info
             gp_info = None
