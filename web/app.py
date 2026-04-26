@@ -1,4 +1,4 @@
-"""PCD GEM Engine — Web Dashboard (FastAPI + Supabase)."""
+"""PCD Concierge Pipeline — Web Dashboard (FastAPI + Supabase)."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ from config.settings import JOBS_DIR
 from src.orchestrator import run_pipeline
 from src.persistence import load_manifest
 
-app = FastAPI(title="PCD GEM Engine", debug=True)
+app = FastAPI(title="PCD Concierge Pipeline", debug=True)
 templates = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
 
 # In-memory tracking for running jobs
@@ -49,8 +49,8 @@ def _list_jobs() -> list[dict]:
     sb = _sb_read()
     if sb:
         try:
-            result = sb.table("gem_jobs").select(
-                "job_id, fund_name, deck_filename, state, gatekeeper_score, gatekeeper_class, created_at, updated_at"
+            result = sb.table("pipeline_jobs").select(
+                "job_id, fund_name, deck_filename, state, prescreen_score, prescreen_class, created_at, updated_at"
             ).order("created_at", desc=True).limit(100).execute()
             jobs = []
             for row in result.data:
@@ -58,8 +58,8 @@ def _list_jobs() -> list[dict]:
                     "job_id": row["job_id"],
                     "fund_name": row.get("fund_name") or row.get("deck_filename", "Unknown"),
                     "state": row.get("state", "unknown"),
-                    "gatekeeper_score": row.get("gatekeeper_score"),
-                    "gatekeeper_class": row.get("gatekeeper_class"),
+                    "prescreen_score": row.get("prescreen_score"),
+                    "prescreen_class": row.get("prescreen_class"),
                     "created_at": _format_ts(row.get("created_at")),
                     "last_updated": _format_ts(row.get("updated_at")),
                 })
@@ -85,8 +85,8 @@ def _list_jobs_fs() -> list[dict]:
                 "job_id": manifest.job_id,
                 "fund_name": manifest.fund_name or manifest.deck_filename,
                 "state": manifest.current_state.value,
-                "gatekeeper_score": None,
-                "gatekeeper_class": None,
+                "prescreen_score": None,
+                "prescreen_class": None,
                 "created_at": manifest.created_at.strftime("%d %b %Y %H:%M UTC"),
                 "last_updated": manifest.last_updated.strftime("%d %b %Y %H:%M UTC"),
             })
@@ -101,17 +101,17 @@ def _get_job_detail(job_id: str) -> Optional[dict]:
     if sb:
         try:
             # Job metadata
-            job_res = sb.table("gem_jobs").select("*").eq("job_id", job_id).single().execute()
+            job_res = sb.table("pipeline_jobs").select("*").eq("job_id", job_id).single().execute()
             job_row = job_res.data
             if not job_row:
                 return None
 
             # Artifacts
-            art_res = sb.table("gem_artifacts").select("stage_name, data").eq("job_id", job_id).order("created_at").execute()
+            art_res = sb.table("pipeline_artifacts").select("stage_name, data").eq("job_id", job_id).order("created_at").execute()
             artifacts = {row["stage_name"]: row["data"] for row in art_res.data}
 
             # Log — normalize created_at → timestamp for template compatibility
-            log_res = sb.table("gem_status_log").select("*").eq("job_id", job_id).order("created_at").execute()
+            log_res = sb.table("pipeline_status_log").select("*").eq("job_id", job_id).order("created_at").execute()
             log_entries = []
             for row in (log_res.data or []):
                 row["timestamp"] = row.get("created_at", "")
@@ -131,8 +131,8 @@ def _get_job_detail(job_id: str) -> Optional[dict]:
                 "fund_name": job_row.get("fund_name") or job_row.get("deck_filename", "Unknown"),
                 "deck_filename": job_row.get("deck_filename", ""),
                 "state": job_row.get("state", "unknown"),
-                "gatekeeper_score": job_row.get("gatekeeper_score"),
-                "gatekeeper_class": job_row.get("gatekeeper_class"),
+                "prescreen_score": job_row.get("prescreen_score"),
+                "prescreen_class": job_row.get("prescreen_class"),
                 "created_at": _format_ts(job_row.get("created_at")),
                 "last_updated": _format_ts(job_row.get("updated_at")),
                 "artifacts": artifacts,
@@ -175,8 +175,8 @@ def _get_job_detail_fs(job_id: str) -> Optional[dict]:
         "fund_name": manifest.fund_name or manifest.deck_filename,
         "deck_filename": manifest.deck_filename,
         "state": manifest.current_state.value,
-        "gatekeeper_score": None,
-        "gatekeeper_class": None,
+        "prescreen_score": None,
+        "prescreen_class": None,
         "created_at": manifest.created_at.strftime("%d %b %Y %H:%M UTC"),
         "last_updated": manifest.last_updated.strftime("%d %b %Y %H:%M UTC"),
         "artifacts": artifacts,
@@ -373,7 +373,7 @@ async def gp_detail(request: Request, gp_id: str):
         # Get associated pipeline jobs
         jobs = []
         try:
-            jobs_res = sb.table("gem_jobs").select("*").eq("gp_id", gp_id).order("created_at", desc=True).execute()
+            jobs_res = sb.table("pipeline_jobs").select("*").eq("gp_id", gp_id).order("created_at", desc=True).execute()
             jobs = jobs_res.data or []
         except Exception:
             pass
@@ -470,9 +470,9 @@ async def gp_run_pipeline(gp_id: str, file: UploadFile = File(...)):
             sb = _sb_write()
             if sb:
                 try:
-                    jobs = sb.table("gem_jobs").select("job_id").order("created_at", desc=True).limit(1).execute()
+                    jobs = sb.table("pipeline_jobs").select("job_id").order("created_at", desc=True).limit(1).execute()
                     if jobs.data:
-                        sb.table("gem_jobs").update({"gp_id": gp_id}).eq("job_id", jobs.data[0]["job_id"]).execute()
+                        sb.table("pipeline_jobs").update({"gp_id": gp_id}).eq("job_id", jobs.data[0]["job_id"]).execute()
                 except Exception:
                     pass
             with _lock:

@@ -42,16 +42,16 @@ def _sb():
 
 
 def _sb_upsert_job(job_id: str, data: dict):
-    """Upsert a row in gem_jobs. Silent on failure."""
+    """Upsert a row in pipeline_jobs. Silent on failure."""
     try:
         client = _sb()
         if client is None:
             return
         data["job_id"] = job_id
         data["updated_at"] = datetime.utcnow().isoformat()
-        client.table("gem_jobs").upsert(data, on_conflict="job_id").execute()
+        client.table("pipeline_jobs").upsert(data, on_conflict="job_id").execute()
     except Exception as e:
-        print(f"  [supabase] gem_jobs upsert warning: {e}")
+        print(f"  [supabase] pipeline_jobs upsert warning: {e}")
 
 
 def _sb_insert_artifact(job_id: str, stage_name: str, artifact_data: dict):
@@ -60,7 +60,7 @@ def _sb_insert_artifact(job_id: str, stage_name: str, artifact_data: dict):
         client = _sb()
         if client is None:
             return
-        client.table("gem_artifacts").upsert(
+        client.table("pipeline_artifacts").upsert(
             {
                 "job_id": job_id,
                 "stage_name": stage_name,
@@ -70,7 +70,7 @@ def _sb_insert_artifact(job_id: str, stage_name: str, artifact_data: dict):
             on_conflict="job_id,stage_name",
         ).execute()
     except Exception as e:
-        print(f"  [supabase] gem_artifacts upsert warning: {e}")
+        print(f"  [supabase] pipeline_artifacts upsert warning: {e}")
 
 
 def _sb_insert_log(job_id: str, entry_dict: dict):
@@ -90,9 +90,9 @@ def _sb_insert_log(job_id: str, entry_dict: dict):
             "prompt_version": entry_dict.get("prompt_version"),
             "token_usage": entry_dict.get("token_usage"),
         }
-        client.table("gem_status_log").insert(row).execute()
+        client.table("pipeline_status_log").insert(row).execute()
     except Exception as e:
-        print(f"  [supabase] gem_status_log insert warning: {e}")
+        print(f"  [supabase] pipeline_status_log insert warning: {e}")
 
 
 def _sb_upload_deck(job_id: str, deck_path: str):
@@ -125,8 +125,8 @@ def _sb_update_gp_pipeline(job_id: str, fund_name: str, score: Optional[int], cl
         result = client.table("gp_pipeline").select("id").eq("gp_name", fund_name).limit(1).execute()
         gp_data = {
             "gp_name": fund_name,
-            "gatekeeper_score": score,
-            "gatekeeper_class": classification,
+            "prescreen_score": score,
+            "prescreen_class": classification,
             "pipeline_state": state,
             "latest_job_id": job_id,
         }
@@ -137,9 +137,9 @@ def _sb_update_gp_pipeline(job_id: str, fund_name: str, score: Optional[int], cl
             resp = client.table("gp_pipeline").insert(gp_data).execute()
             gp_id = resp.data[0]["id"] if resp.data else None
 
-        # Link gem_jobs row to gp_pipeline
+        # Link pipeline_jobs row to gp_pipeline
         if gp_id:
-            client.table("gem_jobs").update({"gp_id": gp_id}).eq("job_id", job_id).execute()
+            client.table("pipeline_jobs").update({"gp_id": gp_id}).eq("job_id", job_id).execute()
     except Exception as e:
         print(f"  [supabase] gp_pipeline upsert warning: {e}")
 
@@ -173,7 +173,7 @@ def create_job(deck_path: str) -> JobManifest:
     )
     _write_manifest(job_dir, manifest)
 
-    # --- Supabase: create gem_jobs row + upload deck ---
+    # --- Supabase: create pipeline_jobs row + upload deck ---
     _sb_upsert_job(job_id, {
         "fund_name": None,
         "deck_filename": src.name,

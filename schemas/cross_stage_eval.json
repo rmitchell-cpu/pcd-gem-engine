@@ -1,6 +1,6 @@
 {
   "$defs": {
-    "CrossGEMChecks": {
+    "CrossStageChecks": {
       "properties": {
         "strategy_drift": {
           "$ref": "#/$defs/DriftCheck"
@@ -21,7 +21,7 @@
           "$ref": "#/$defs/DriftCheck"
         }
       },
-      "title": "CrossGEMChecks",
+      "title": "CrossStageChecks",
       "type": "object"
     },
     "DriftCheck": {
@@ -62,7 +62,7 @@
       "type": "boolean"
     },
     "checks": {
-      "$ref": "#/$defs/CrossGEMChecks"
+      "$ref": "#/$defs/CrossStageChecks"
     },
     "artifacts_requiring_repair": {
       "items": {
@@ -92,6 +92,6 @@
     "checks",
     "decision"
   ],
-  "title": "CrossGEMEvalOutput",
+  "title": "CrossStageEvalOutput",
   "type": "object"
 }

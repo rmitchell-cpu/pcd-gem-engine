@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""PCD GEM Engine — CLI entry point.
+"""PCD Concierge Pipeline — CLI entry point.
 
 Usage:
     # Run the full pipeline on a deck
     python run.py path/to/deck.pdf
 
     # Rerun a single stage on an existing job
-    python run.py --stage gem2_extractor --job 20260329_143012_abc12345
+    python run.py --stage 02_deck_analysis --job 20260329_143012_abc12345
 
     # List all jobs
     python run.py --list-jobs
@@ -34,7 +34,7 @@ from src.persistence import list_jobs, load_manifest
 
 def main():
     parser = argparse.ArgumentParser(
-        description="PCD GEM Concierge Workflow Engine",
+        description="PCD Concierge Pipeline Workflow Engine",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )

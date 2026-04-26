@@ -11,18 +11,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src.models import (
     AnalystExtraction,
     AngleBrief,
-    CrossGEMEvalOutput,
+    CrossStageEvalOutput,
     DealCard,
-    GatekeeperReport,
-    GEM3Emails,
-    RandyEvalOutput,
+    PrescreenReport,
+    LPEmails,
+    VoiceEvalOutput,
     ReviewBundleManifest,
     TaxonomyOutput,
     WorkflowState,
 )
 
 
-def test_gatekeeper_report_valid():
+def test_prescreen_report_valid():
     data = {
         "fund_name": "Acme Capital Fund III",
         "coiled_spring": {"score": 7, "diagnostic": "Clear regulatory tailwind cited."},
@@ -36,12 +36,12 @@ def test_gatekeeper_report_valid():
         "pcd_intervention_detail": "PCD can build the 'Right Now' narrative.",
         "proprietary_penalty_applied": True,
     }
-    report = GatekeeperReport.model_validate(data)
+    report = PrescreenReport.model_validate(data)
     assert report.total_score == 22
     assert report.classification.value == "high_potential_aspiring"
 
 
-def test_gatekeeper_report_invalid_score():
+def test_prescreen_report_invalid_score():
     data = {
         "fund_name": "Bad Fund",
         "coiled_spring": {"score": 15, "diagnostic": "Too high"},
@@ -55,7 +55,7 @@ def test_gatekeeper_report_invalid_score():
         "pcd_intervention_detail": "Yes",
     }
     with pytest.raises(Exception):
-        GatekeeperReport.model_validate(data)
+        PrescreenReport.model_validate(data)
 
 
 def test_analyst_extraction_with_gaps():
@@ -74,7 +74,7 @@ def test_analyst_extraction_with_gaps():
 
 def test_angle_brief_valid():
     data = {
-        "gatekeeper_context": {
+        "prescreen_context": {
             "classification": "Native",
             "assertiveness_guidance": "Confident framing acceptable.",
             "should_generate_outreach": True,
@@ -86,14 +86,14 @@ def test_angle_brief_valid():
         "forwardable_sentence_goal": "One sentence an LP could forward.",
         "recommended_cta_type": "offer_deck",
         "subject_line_direction": "Lead with strategy niche.",
-        "tone_guidance_for_gem3": "Measured confidence.",
-        "constraints_for_gem3": ["No buzzwords", "No urgency overstatement"],
+        "tone_guidance": "Measured confidence.",
+        "constraints": ["No buzzwords", "No urgency overstatement"],
     }
     brief = AngleBrief.model_validate(data)
     assert brief.primary_angle.value == "differentiated_edge"
 
 
-def test_gem3_emails_must_have_4():
+def test_lp_emails_must_have_4():
     data = {
         "fund_name": "Test Fund",
         "emails": [
@@ -108,7 +108,7 @@ def test_gem3_emails_must_have_4():
         ],
     }
     with pytest.raises(Exception):
-        GEM3Emails.model_validate(data)
+        LPEmails.model_validate(data)
 
 
 def test_deal_card_valid():
@@ -141,7 +141,7 @@ def test_deal_card_valid():
     assert card.target_fund_size == "US$250M"
 
 
-def test_cross_gem_eval_valid():
+def test_cross_stage_eval_valid():
     data = {
         "overall_pass": False,
         "checks": {
@@ -152,11 +152,11 @@ def test_cross_gem_eval_valid():
             "formatting_violations": {"detected": False},
             "classification_misalignment": {"detected": False},
         },
-        "artifacts_requiring_repair": ["gem3_randy_emails", "gem5_deal_card"],
+        "artifacts_requiring_repair": ["06_lp_emails", "05_deal_card"],
         "decision": "revise",
         "revision_instructions": "Fix strategy description in Email 2. Remove unverified figure from deal card.",
     }
-    eval_output = CrossGEMEvalOutput.model_validate(data)
+    eval_output = CrossStageEvalOutput.model_validate(data)
     assert not eval_output.overall_pass
     assert len(eval_output.artifacts_requiring_repair) == 2
 

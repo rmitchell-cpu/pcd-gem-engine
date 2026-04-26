@@ -9,24 +9,25 @@ from pydantic import BaseModel, ValidationError
 from src.models import (
     AnalystExtraction,
     AngleBrief,
-    CrossGEMEvalOutput,
+    CrossStageEvalOutput,
     DealCard,
-    GatekeeperReport,
-    GEM3Emails,
-    RandyEvalOutput,
+    LPEmails,
+    PrescreenReport,
     TaxonomyOutput,
+    VoiceEvalOutput,
 )
 
 # Maps stage name → Pydantic model class
 STAGE_SCHEMA_MAP: dict[str, Type[BaseModel]] = {
-    "gem1_gatekeeper": GatekeeperReport,
-    "gem2_extractor": AnalystExtraction,
-    "gem2_5_angle_brief": AngleBrief,
-    "gem3_randy_emails": GEM3Emails,
-    "gem4_taxonomy_ted": TaxonomyOutput,
-    "gem5_deal_card": DealCard,
-    "eval_randy_voice": RandyEvalOutput,
-    "eval_cross_gem": CrossGEMEvalOutput,
+    "prescreen": PrescreenReport,
+    "01_fund_extract": AnalystExtraction,  # placeholder — JSON John schema TBD
+    "02_deck_analysis": AnalystExtraction,
+    "03_angle_brief": AngleBrief,
+    "04_preqin_taxonomy": TaxonomyOutput,
+    "05_deal_card": DealCard,
+    "06_lp_emails": LPEmails,
+    "eval_voice": VoiceEvalOutput,
+    "eval_cross_stage": CrossStageEvalOutput,
 }
 
 

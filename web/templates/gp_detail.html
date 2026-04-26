@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ gp.gp_name }} — PCD GEM Engine</title>
+  <title>{{ gp.gp_name }} — PCD Concierge Pipeline</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; color: #1a1a1a; }
@@ -76,14 +76,14 @@
         <span>
           {% if gp.pipeline_state == 'human_review_pending' %}<span class="badge badge-blue">Awaiting Review</span>
           {% elif gp.pipeline_state == 'approved' %}<span class="badge badge-green">Approved</span>
-          {% elif gp.pipeline_state == 'rejected_tourist' %}<span class="badge badge-red">Tourist</span>
+          {% elif gp.pipeline_state == 'rejected_challenging' %}<span class="badge badge-red">Challenging</span>
           {% elif gp.pipeline_state %}<span class="badge badge-yellow">{{ gp.pipeline_state | replace('_', ' ') | title }}</span>
           {% else %}<span style="color:#94a3b8">Not yet run</span>{% endif %}
         </span>
       </div>
       <div class="meta-item">
-        <label>Gatekeeper Score</label>
-        <span>{% if gp.gatekeeper_score is not none %}<strong>{{ gp.gatekeeper_score }}</strong>/40{% else %}—{% endif %}</span>
+        <label>Prescreen Score</label>
+        <span>{% if gp.prescreen_score is not none %}<strong>{{ gp.prescreen_score }}</strong>/40{% else %}—{% endif %}</span>
       </div>
       <div class="meta-item">
         <label>Payment</label>
@@ -148,11 +148,11 @@
 
   <!-- Run Pipeline -->
   <div class="card">
-    <h2>Run GEM Pipeline</h2>
+    <h2>Run Concierge Pipeline</h2>
     <div class="upload-zone" id="drop-zone" onclick="document.getElementById('deck-input').click()">
       <div style="font-size:24px;margin-bottom:4px">📄</div>
       <strong>Drop a deck PDF here or click to upload</strong>
-      <p>Runs the full GEM pipeline and links results to this GP record</p>
+      <p>Runs the full Concierge pipeline and links results to this GP record</p>
       <input type="file" id="deck-input" accept=".pdf">
     </div>
     <div id="pipeline-progress">
@@ -181,14 +181,14 @@
           <td><a class="job-link" href="/jobs/{{ j.job_id }}">{{ j.job_id }}</a></td>
           <td>
             {% if j.state == 'human_review_pending' %}<span class="badge badge-blue">Review</span>
-            {% elif j.state == 'rejected_tourist' %}<span class="badge badge-red">Tourist</span>
+            {% elif j.state == 'rejected_challenging' %}<span class="badge badge-red">Challenging</span>
             {% elif j.state == 'approved' %}<span class="badge badge-green">Approved</span>
             {% elif j.state == 'failed' %}<span class="badge badge-red">Failed</span>
             {% else %}<span class="badge badge-yellow">{{ j.state | replace('_', ' ') | title }}</span>
             {% endif %}
           </td>
-          <td>{% if j.gatekeeper_score is not none %}{{ j.gatekeeper_score }}/40{% else %}—{% endif %}</td>
-          <td>{{ j.gatekeeper_class or '—' }}</td>
+          <td>{% if j.prescreen_score is not none %}{{ j.prescreen_score }}/40{% else %}—{% endif %}</td>
+          <td>{{ j.prescreen_class or '—' }}</td>
           <td style="font-size:12px;color:#64748b">{{ j.created_at[:19] if j.created_at else '—' }}</td>
         </tr>
         {% endfor %}
@@ -242,7 +242,7 @@ async function runPipeline(file) {
     if (data.error) { msg.textContent = 'Error: ' + data.error; return; }
     trackingId = data.tracking_id;
     bar.style.width = '30%';
-    msg.textContent = 'Running GEM pipeline — this takes 2-3 minutes...';
+    msg.textContent = 'Running Concierge pipeline — this takes 2-3 minutes...';
   } catch (err) {
     msg.textContent = 'Upload failed: ' + err;
     return;

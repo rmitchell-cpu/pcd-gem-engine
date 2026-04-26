@@ -67,6 +67,6 @@
     "fund_name",
     "emails"
   ],
-  "title": "GEM3Emails",
+  "title": "LPEmails",
   "type": "object"
 }

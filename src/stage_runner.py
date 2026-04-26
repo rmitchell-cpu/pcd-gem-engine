@@ -1,6 +1,6 @@
 """Base stage execution engine.
 
-Every GEM stage follows the same protocol:
+Every Concierge pipeline stage follows the same protocol:
 1. Load prompt from prompts/<stage>.md
 2. Inject upstream artifacts as structured context
 3. Call Claude API
@@ -117,11 +117,11 @@ def run_stage(
     """Execute a single pipeline stage.
 
     Args:
-        stage_name: The stage identifier (e.g. "gem1_gatekeeper").
+        stage_name: The stage identifier (e.g. "prescreen").
         job_id: The job being processed.
         context: A dict of context items to inject. Keys are labels,
                  values are the text/JSON content. Common keys:
-                 "deck_text", "gatekeeper_report", "analyst_extraction", etc.
+                 "deck_text", "prescreen_report", "analyst_extraction", etc.
         system_suffix: Optional additional system instructions.
 
     Returns:

@@ -109,6 +109,6 @@
     "emails_evaluated",
     "decision"
   ],
-  "title": "RandyEvalOutput",
+  "title": "VoiceEvalOutput",
   "type": "object"
 }

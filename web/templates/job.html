@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ job.fund_name }} — PCD GEM Engine</title>
+  <title>{{ job.fund_name }} — PCD Concierge Pipeline</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; color: #1a1a1a; }
@@ -65,10 +65,10 @@
     .email-body { font-size: 13px; line-height: 1.7; color: #374151; white-space: pre-wrap; background: #f8fafc; border-radius: 6px; padding: 12px; }
     .back-link { display: inline-block; margin-bottom: 16px; color: #3b5bdb; text-decoration: none; font-size: 13px; }
     .back-link:hover { text-decoration: underline; }
-    .tourist-banner { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px 20px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
-    .tourist-banner .icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
-    .tourist-banner strong { display: block; color: #991b1b; margin-bottom: 4px; }
-    .tourist-banner p { font-size: 13px; color: #7f1d1d; line-height: 1.5; }
+    .challenging-banner { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px 20px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+    .challenging-banner .icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .challenging-banner strong { display: block; color: #991b1b; margin-bottom: 4px; }
+    .challenging-banner p { font-size: 13px; color: #7f1d1d; line-height: 1.5; }
     .review-banner { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px 20px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
     .review-banner .icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
     .review-banner strong { display: block; color: #1e40af; margin-bottom: 4px; }
@@ -85,12 +85,12 @@
 
 <div class="container">
 
-  {% if job.state == 'rejected_tourist' %}
-  <div class="tourist-banner">
+  {% if job.state == 'rejected_challenging' %}
+  <div class="challenging-banner">
     <div class="icon">🚫</div>
     <div>
-      <strong>Tourist Classification — Pipeline Stopped</strong>
-      <p>Gatekeeper scored this deck below the LP-outreach threshold. No emails, deal card, or taxonomy were generated. Internal diagnostics are preserved below.</p>
+      <strong>Challenging Classification — Pipeline Stopped</strong>
+      <p>Prescreen scored this deck below the LP-outreach threshold. No emails, deal card, or taxonomy were generated. Internal diagnostics are preserved below.</p>
     </div>
   </div>
   {% elif job.state == 'human_review_pending' %}
@@ -111,7 +111,7 @@
         <span>
           {% if job.state == 'human_review_pending' %}<span class="badge badge-blue">Awaiting Review</span>
           {% elif job.state == 'approved' %}<span class="badge badge-green">Approved</span>
-          {% elif job.state == 'rejected_tourist' %}<span class="badge badge-red">Tourist — Stopped</span>
+          {% elif job.state == 'rejected_challenging' %}<span class="badge badge-red">Challenging — Stopped</span>
           {% elif job.state == 'failed' %}<span class="badge badge-red">Failed</span>
           {% elif job.state in ['uploaded', 'parsed', 'archived'] %}<span class="badge badge-gray">{{ job.state | capitalize }}</span>
           {% else %}<span class="badge badge-yellow">{{ job.state | replace('_', ' ') | title }}</span>
@@ -125,11 +125,11 @@
     </div>
   </div>
 
-  <!-- Gatekeeper -->
-  {% if 'gem1_gatekeeper' in job.artifacts %}
-  {% set gk = job.artifacts.gem1_gatekeeper %}
+  <!-- Prescreen -->
+  {% if 'prescreen' in job.artifacts %}
+  {% set gk = job.artifacts.prescreen %}
   <div class="card">
-    <h2>GEM 1 — Gatekeeper Report</h2>
+    <h2>Prescreen Report</h2>
     <div class="score-bar">
       <span class="score-number">{{ gk.total_score }}</span>
       <span class="score-denom">/ 40</span>
@@ -138,7 +138,7 @@
       </div>
       {% if gk.classification == 'native' %}<span class="badge badge-green">Native</span>
       {% elif gk.classification == 'high_potential_aspiring' %}<span class="badge badge-blue">High Potential Aspiring</span>
-      {% else %}<span class="badge badge-red">Tourist</span>
+      {% else %}<span class="badge badge-red">Challenging</span>
       {% endif %}
     </div>
     <div class="pillars">
@@ -165,11 +165,26 @@
   </div>
   {% endif %}
 
-  <!-- Analyst Extraction -->
-  {% if 'gem2_extractor' in job.artifacts %}
-  {% set ex = job.artifacts.gem2_extractor %}
+  <!-- Fund Extract (JSON John) — Stage 01 placeholder -->
   <div class="card">
-    <h2>GEM 2 — Analyst Extraction</h2>
+    <h2>Stage 01 — Fund Extract (JSON John)</h2>
+    {% if '01_fund_extract' in job.artifacts %}
+    {% set fx = job.artifacts['01_fund_extract'] %}
+    <div style="font-size:13px;color:#475569;padding:12px;background:#f8fafc;border-radius:6px">
+      <pre style="white-space:pre-wrap;word-break:break-word;font-size:12px">{{ fx | tojson(indent=2) }}</pre>
+    </div>
+    {% else %}
+    <div style="font-size:13px;color:#94a3b8;padding:14px;background:#f8fafc;border-radius:6px;font-style:italic">
+      Stage not yet implemented. JSON John will produce verified-facts ground truth (fund mechanics, terms, strategy, track record) consumed by downstream stages.
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Analyst Extraction (Stage 02) -->
+  {% if '02_deck_analysis' in job.artifacts %}
+  {% set ex = job.artifacts['02_deck_analysis'] %}
+  <div class="card">
+    <h2>Stage 02 — Analyst Extraction</h2>
     {% if ex.executive_summary %}
     <div style="font-size:14px;line-height:1.7;color:#374151;margin-bottom:16px;padding:14px;background:#f8fafc;border-radius:6px;">{{ ex.executive_summary }}</div>
     {% endif %}
@@ -193,11 +208,11 @@
   </div>
   {% endif %}
 
-  <!-- Emails -->
-  {% if 'gem3_randy_emails' in job.artifacts %}
-  {% set emails = job.artifacts.gem3_randy_emails %}
+  <!-- LP Emails (Stage 06) -->
+  {% if '06_lp_emails' in job.artifacts %}
+  {% set emails = job.artifacts['06_lp_emails'] %}
   <div class="card">
-    <h2>GEM 3 — Randy Voice LP Emails</h2>
+    <h2>Stage 06 — LP Emails</h2>
     {% for email in emails.emails %}
     <div class="email-card">
       <div class="email-label">{{ email.label }} — {{ email.angle | upper }}</div>
@@ -212,11 +227,11 @@
   </div>
   {% endif %}
 
-  <!-- Deal Card -->
-  {% if 'gem5_deal_card' in job.artifacts %}
-  {% set dc = job.artifacts.gem5_deal_card %}
+  <!-- Deal Card (Stage 05) -->
+  {% if '05_deal_card' in job.artifacts %}
+  {% set dc = job.artifacts['05_deal_card'] %}
   <div class="card">
-    <h2>GEM 5 — Deal Card</h2>
+    <h2>Stage 05 — Deal Card</h2>
     <div class="meta-grid" style="margin-bottom:16px">
       <div class="meta-item"><label>Strategy</label><span>{{ dc.strategy_tag }}</span></div>
       <div class="meta-item"><label>Target Fund Size</label><span>{{ dc.target_fund_size }}</span></div>
@@ -239,11 +254,11 @@
   </div>
   {% endif %}
 
-  <!-- Taxonomy -->
-  {% if 'gem4_taxonomy_ted' in job.artifacts %}
-  {% set tax = job.artifacts.gem4_taxonomy_ted %}
+  <!-- Taxonomy (Stage 04) -->
+  {% if '04_preqin_taxonomy' in job.artifacts %}
+  {% set tax = job.artifacts['04_preqin_taxonomy'] %}
   <div class="card">
-    <h2>GEM 4 — Taxonomy (Ted)</h2>
+    <h2>Stage 04 — Taxonomy (Ted)</h2>
     {% if tax.canonical_strategy_tags %}
     <div style="margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px">
       {% for tag in tax.canonical_strategy_tags %}<span class="badge badge-blue">{{ tag }}</span>{% endfor %}
@@ -260,13 +275,13 @@
   {% endif %}
 
   <!-- Evaluators -->
-  {% if 'eval_randy_voice' in job.artifacts or 'eval_cross_gem' in job.artifacts %}
+  {% if 'eval_voice' in job.artifacts or 'eval_cross_stage' in job.artifacts %}
   <div class="card">
     <h2>Evaluator Results</h2>
-    {% if 'eval_randy_voice' in job.artifacts %}
-    {% set rv = job.artifacts.eval_randy_voice %}
+    {% if 'eval_voice' in job.artifacts %}
+    {% set rv = job.artifacts.eval_voice %}
     <div style="margin-bottom:16px">
-      <div style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:10px">Randy Voice Eval —
+      <div style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:10px">Voice Eval —
         {% if rv.overall_pass %}<span class="badge badge-green">Pass</span>{% else %}<span class="badge badge-red">Revise</span>{% endif %}
       </div>
       {% for email_eval in rv.emails_evaluated %}
@@ -277,10 +292,10 @@
       {% endfor %}
     </div>
     {% endif %}
-    {% if 'eval_cross_gem' in job.artifacts %}
-    {% set cg = job.artifacts.eval_cross_gem %}
+    {% if 'eval_cross_stage' in job.artifacts %}
+    {% set cg = job.artifacts.eval_cross_stage %}
     <div>
-      <div style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:10px">Cross-GEM Consistency —
+      <div style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:10px">Cross-Stage Consistency —
         {% if cg.overall_pass %}<span class="badge badge-green">Pass</span>{% else %}<span class="badge badge-red">Issues Found</span>{% endif %}
       </div>
       {% for check_name, check_val in cg.checks.items() %}

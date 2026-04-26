@@ -1,12 +1,12 @@
 {
   "$defs": {
-    "GatekeeperClassification": {
+    "PrescreenClassification": {
       "enum": [
         "native",
         "high_potential_aspiring",
-        "tourist"
+        "challenging"
       ],
-      "title": "GatekeeperClassification",
+      "title": "PrescreenClassification",
       "type": "string"
     },
     "PillarScore": {
@@ -54,7 +54,7 @@
       "type": "integer"
     },
     "classification": {
-      "$ref": "#/$defs/GatekeeperClassification"
+      "$ref": "#/$defs/PrescreenClassification"
     },
     "critical_flaw": {
       "title": "Critical Flaw",
@@ -86,6 +86,6 @@
     "pcd_intervention_viable",
     "pcd_intervention_detail"
   ],
-  "title": "GatekeeperReport",
+  "title": "PrescreenReport",
   "type": "object"
 }

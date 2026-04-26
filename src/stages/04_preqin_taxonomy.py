@@ -1,4 +1,4 @@
-"""GEM 4: Taxonomy Ted — database search translation stage."""
+"""Stage 04: Taxonomy Ted — database search translation stage."""
 
 from pathlib import Path
 
@@ -10,7 +10,7 @@ from src.stage_runner import run_stage
 
 def execute(job_id: str) -> StageResult:
     """Run Taxonomy Ted using Analyst Report and deck text."""
-    an = load_artifact(job_id, "gem2_extractor", AnalystExtraction)
+    an = load_artifact(job_id, "02_deck_analysis", AnalystExtraction)
     parsed = load_parsed_text(job_id)
 
     context = {
@@ -24,7 +24,7 @@ def execute(job_id: str) -> StageResult:
         context["preqin_industry_tree"] = preqin_path.read_text()
 
     return run_stage(
-        stage_name="gem4_taxonomy_ted",
+        stage_name="04_preqin_taxonomy",
         job_id=job_id,
         context=context,
     )

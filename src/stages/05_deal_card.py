@@ -1,4 +1,4 @@
-"""GEM 5: Summary Sam — Deal Card / Tear Sheet generation."""
+"""Stage 05: Summary Sam — Deal Card / Tear Sheet generation."""
 
 from src.models import AnalystExtraction, StageResult, TaxonomyOutput
 from src.persistence import load_artifact, load_parsed_text
@@ -7,11 +7,12 @@ from src.stage_runner import run_stage
 
 def execute(job_id: str) -> StageResult:
     """Run Deal Card generation using three sources."""
-    an = load_artifact(job_id, "gem2_extractor", AnalystExtraction)
-    tx = load_artifact(job_id, "gem4_taxonomy_ted", TaxonomyOutput)
+    # TODO: load 01_fund_extract artifact for verified facts ground truth
+    an = load_artifact(job_id, "02_deck_analysis", AnalystExtraction)
+    tx = load_artifact(job_id, "04_preqin_taxonomy", TaxonomyOutput)
     parsed = load_parsed_text(job_id)
     return run_stage(
-        stage_name="gem5_deal_card",
+        stage_name="05_deal_card",
         job_id=job_id,
         context={
             "analyst_extraction_report": an.model_dump_json(indent=2),

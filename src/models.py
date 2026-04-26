@@ -1,4 +1,4 @@
-"""Pydantic models for all GEM pipeline artifacts and workflow state."""
+"""Pydantic models for all Concierge pipeline artifacts and workflow state."""
 
 from __future__ import annotations
 
@@ -16,15 +16,15 @@ from pydantic import BaseModel, Field
 class WorkflowState(str, enum.Enum):
     UPLOADED = "uploaded"
     PARSED = "parsed"
-    GATEKEEPER_COMPLETE = "gatekeeper_complete"
-    REJECTED_TOURIST = "rejected_tourist"
+    PRESCREEN_COMPLETE = "prescreen_complete"
+    REJECTED_CHALLENGING = "rejected_challenging"
     ANALYST_COMPLETE = "analyst_complete"
     ANGLE_BRIEF_COMPLETE = "angle_brief_complete"
     TAXONOMY_COMPLETE = "taxonomy_complete"
     DEAL_CARD_COMPLETE = "deal_card_complete"
     EMAIL_DRAFTS_COMPLETE = "email_drafts_complete"
-    RANDY_EVAL_COMPLETE = "randy_eval_complete"
-    CROSS_GEM_EVAL_COMPLETE = "cross_gem_eval_complete"
+    VOICE_EVAL_COMPLETE = "voice_eval_complete"
+    CROSS_STAGE_EVAL_COMPLETE = "cross_stage_eval_complete"
     REGENERATION_REQUIRED = "regeneration_required"
     REGENERATED = "regenerated"
     HUMAN_REVIEW_PENDING = "human_review_pending"
@@ -33,10 +33,10 @@ class WorkflowState(str, enum.Enum):
     FAILED = "failed"
 
 
-class GatekeeperClassification(str, enum.Enum):
+class PrescreenClassification(str, enum.Enum):
     NATIVE = "native"
     HIGH_POTENTIAL_ASPIRING = "high_potential_aspiring"
-    TOURIST = "tourist"
+    CHALLENGING = "challenging"
 
 
 class AnglePrimary(str, enum.Enum):
@@ -94,7 +94,7 @@ class StatusLogEntry(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# GEM 1: Gatekeeper Report
+# prescreen: Prescreen Report
 # ---------------------------------------------------------------------------
 
 class PillarScore(BaseModel):
@@ -102,14 +102,14 @@ class PillarScore(BaseModel):
     diagnostic: str
 
 
-class GatekeeperReport(BaseModel):
+class PrescreenReport(BaseModel):
     fund_name: str
     coiled_spring: PillarScore
     inbound_gravity: PillarScore
     outbound_mechanics: PillarScore
     logic_discipline: PillarScore
     total_score: int = Field(ge=0, le=40)
-    classification: GatekeeperClassification
+    classification: PrescreenClassification
     critical_flaw: str
     pcd_intervention_viable: bool
     pcd_intervention_detail: str
@@ -117,7 +117,7 @@ class GatekeeperReport(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# GEM 2: Analyst Extraction Report
+# 02_deck_analysis: Analyst Extraction Report
 # ---------------------------------------------------------------------------
 
 class InboundGravityDetail(BaseModel):
@@ -162,17 +162,17 @@ class AnalystExtraction(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# GEM 2.5: Angle Brief
+# 03_angle_brief: Angle Brief
 # ---------------------------------------------------------------------------
 
-class GatekeeperContext(BaseModel):
-    classification: str  # "Native", "High-Potential Aspiring", "Tourist", "Not Available"
+class PrescreenContext(BaseModel):
+    classification: str  # "Native", "High-Potential Aspiring", "Challenging", "Not Available"
     assertiveness_guidance: str
     should_generate_outreach: bool
 
 
 class AngleBrief(BaseModel):
-    gatekeeper_context: GatekeeperContext
+    prescreen_context: PrescreenContext
     primary_angle: AnglePrimary
     angle_rationale: str
     top_points_to_surface: list[str] = Field(min_length=3, max_length=3)
@@ -180,12 +180,12 @@ class AngleBrief(BaseModel):
     forwardable_sentence_goal: str
     recommended_cta_type: CTAType
     subject_line_direction: str
-    tone_guidance_for_gem3: str
-    constraints_for_gem3: list[str] = Field(min_length=2, max_length=4)
+    tone_guidance: str
+    constraints: list[str] = Field(min_length=2, max_length=4)
 
 
 # ---------------------------------------------------------------------------
-# GEM 4: Taxonomy Output
+# 04_preqin_taxonomy: Taxonomy Output
 # ---------------------------------------------------------------------------
 
 class TranslationMatrixEntry(BaseModel):
@@ -218,7 +218,7 @@ class TaxonomyOutput(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# GEM 5: Deal Card
+# 05_deal_card: Deal Card
 # ---------------------------------------------------------------------------
 
 class RightNowWindow(BaseModel):
@@ -256,7 +256,7 @@ class DealCard(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# GEM 3: LP Email Drafts
+# 06_lp_emails: LP Email Drafts
 # ---------------------------------------------------------------------------
 
 class LPEmail(BaseModel):
@@ -268,7 +268,7 @@ class LPEmail(BaseModel):
     angle: EmailAngle
 
 
-class GEM3Emails(BaseModel):
+class LPEmails(BaseModel):
     fund_name: str
     emails: list[LPEmail] = Field(min_length=4, max_length=4)
 
@@ -288,7 +288,7 @@ class EmailEvaluation(BaseModel):
     revision_instructions: Optional[str] = None
 
 
-class RandyEvalOutput(BaseModel):
+class VoiceEvalOutput(BaseModel):
     overall_pass: bool
     emails_evaluated: list[EmailEvaluation]
     decision: EvalDecision
@@ -300,7 +300,7 @@ class DriftCheck(BaseModel):
     detail: Optional[str] = None
 
 
-class CrossGEMChecks(BaseModel):
+class CrossStageChecks(BaseModel):
     strategy_drift: DriftCheck = Field(default_factory=DriftCheck)
     urgency_drift: DriftCheck = Field(default_factory=DriftCheck)
     sourcing_edge_drift: DriftCheck = Field(default_factory=DriftCheck)
@@ -309,9 +309,9 @@ class CrossGEMChecks(BaseModel):
     classification_misalignment: DriftCheck = Field(default_factory=DriftCheck)
 
 
-class CrossGEMEvalOutput(BaseModel):
+class CrossStageEvalOutput(BaseModel):
     overall_pass: bool
-    checks: CrossGEMChecks
+    checks: CrossStageChecks
     artifacts_requiring_repair: list[str] = Field(default_factory=list)
     decision: EvalDecision
     revision_instructions: Optional[str] = None
@@ -326,8 +326,8 @@ class ReviewBundleManifest(BaseModel):
     fund_name: str
     created_at: datetime
     pipeline_status: WorkflowState
-    gatekeeper_classification: GatekeeperClassification
-    gatekeeper_score: int
+    prescreen_class: PrescreenClassification
+    prescreen_score: int
     evaluator_passed: bool
     regeneration_count: int = 0
     artifacts: dict[str, str]  # stage_name -> relative file path

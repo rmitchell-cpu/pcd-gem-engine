@@ -8,8 +8,8 @@ from pathlib import Path
 
 from config.settings import JOBS_DIR
 from src.models import (
-    GatekeeperClassification,
-    GatekeeperReport,
+    PrescreenClassification,
+    PrescreenReport,
     ReviewBundleManifest,
     WorkflowState,
 )
@@ -19,7 +19,7 @@ from src.persistence import load_manifest
 def assemble_review_bundle(
     job_id: str,
     fund_name: str,
-    gatekeeper: GatekeeperReport,
+    prescreen_report: PrescreenReport,
     evaluator_passed: bool,
     regeneration_count: int = 0,
 ) -> ReviewBundleManifest:
@@ -48,11 +48,11 @@ def assemble_review_bundle(
     if regeneration_count > 0:
         flagged.append(f"Regeneration was triggered {regeneration_count} time(s)")
 
-    if gatekeeper.classification == GatekeeperClassification.TOURIST:
-        manual_attention.append("Tourist classification — no LP outreach generated")
-        flagged.append("Pipeline stopped at Gatekeeper — internal artifacts only")
+    if prescreen_report.classification == PrescreenClassification.CHALLENGING:
+        manual_attention.append("Challenging classification — no LP outreach generated")
+        flagged.append("Pipeline stopped at prescreen — internal artifacts only")
 
-    if gatekeeper.proprietary_penalty_applied:
+    if prescreen_report.proprietary_penalty_applied:
         flagged.append("Proprietary penalty was applied to Inbound Gravity score")
 
     return ReviewBundleManifest(
@@ -60,8 +60,8 @@ def assemble_review_bundle(
         fund_name=fund_name,
         created_at=datetime.utcnow(),
         pipeline_status=manifest.current_state,
-        gatekeeper_classification=gatekeeper.classification,
-        gatekeeper_score=gatekeeper.total_score,
+        prescreen_class=prescreen_report.classification,
+        prescreen_score=prescreen_report.total_score,
         evaluator_passed=evaluator_passed,
         regeneration_count=regeneration_count,
         artifacts=artifacts,
@@ -74,7 +74,7 @@ def generate_human_readable_summary(bundle: ReviewBundleManifest) -> str:
     """Generate a plain-text summary suitable for human review."""
     lines = [
         "=" * 60,
-        "PCD GEM ENGINE — REVIEW BUNDLE",
+        "PCD CONCIERGE PIPELINE — REVIEW BUNDLE",
         "=" * 60,
         "",
         f"Fund:           {bundle.fund_name}",
@@ -82,9 +82,9 @@ def generate_human_readable_summary(bundle: ReviewBundleManifest) -> str:
         f"Generated:      {bundle.created_at.strftime('%d %m %Y %H:%M UTC')}",
         f"Pipeline State: {bundle.pipeline_status.value}",
         "",
-        "--- GATEKEEPER ---",
-        f"Score:          {bundle.gatekeeper_score}/40",
-        f"Classification: {bundle.gatekeeper_classification.value}",
+        "--- PRESCREEN ---",
+        f"Score:          {bundle.prescreen_score}/40",
+        f"Classification: {bundle.prescreen_class.value}",
         "",
         "--- EVALUATORS ---",
         f"Passed:         {'Yes' if bundle.evaluator_passed else 'NO — review required'}",

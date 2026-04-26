@@ -1,27 +1,27 @@
 {
   "$defs": {
-    "GatekeeperClassification": {
+    "PrescreenClassification": {
       "enum": [
         "native",
         "high_potential_aspiring",
-        "tourist"
+        "challenging"
       ],
-      "title": "GatekeeperClassification",
+      "title": "PrescreenClassification",
       "type": "string"
     },
     "WorkflowState": {
       "enum": [
         "uploaded",
         "parsed",
-        "gatekeeper_complete",
-        "rejected_tourist",
+        "prescreen_complete",
+        "rejected_challenging",
         "analyst_complete",
         "angle_brief_complete",
         "taxonomy_complete",
         "deal_card_complete",
         "email_drafts_complete",
-        "randy_eval_complete",
-        "cross_gem_eval_complete",
+        "voice_eval_complete",
+        "cross_stage_eval_complete",
         "regeneration_required",
         "regenerated",
         "human_review_pending",
@@ -50,11 +50,11 @@
     "pipeline_status": {
       "$ref": "#/$defs/WorkflowState"
     },
-    "gatekeeper_classification": {
-      "$ref": "#/$defs/GatekeeperClassification"
+    "prescreen_class": {
+      "$ref": "#/$defs/PrescreenClassification"
     },
-    "gatekeeper_score": {
-      "title": "Gatekeeper Score",
+    "prescreen_score": {
+      "title": "Prescreen Score",
       "type": "integer"
     },
     "evaluator_passed": {
@@ -93,8 +93,8 @@
     "fund_name",
     "created_at",
     "pipeline_status",
-    "gatekeeper_classification",
-    "gatekeeper_score",
+    "prescreen_class",
+    "prescreen_score",
     "evaluator_passed",
     "artifacts"
   ],
