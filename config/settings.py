@@ -12,7 +12,6 @@ REFERENCES_DIR = PROMPTS_DIR / "references"
 # LLM
 MODEL = "claude-opus-4-7"
 MAX_TOKENS = 16384
-TEMPERATURE = 0.2  # Low temperature for consistency and factual precision
 
 # Retry
 MAX_STAGE_RETRIES = 2

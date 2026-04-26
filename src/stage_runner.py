@@ -29,7 +29,6 @@ from config.settings import (
     MAX_TOKENS,
     MODEL,
     PROMPTS_DIR,
-    TEMPERATURE,
 )
 from src.models import StageResult
 from src.persistence import log_transition, save_artifact
@@ -169,7 +168,6 @@ def run_stage(
             response = client.messages.create(
                 model=MODEL,
                 max_tokens=MAX_TOKENS,
-                temperature=TEMPERATURE,
                 system=system_message,
                 messages=[
                     {"role": "user", "content": user_message + retry_note},

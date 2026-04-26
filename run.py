@@ -102,11 +102,27 @@ def main():
 
     bundle_path = run_pipeline(str(deck_path), verbose=not args.quiet)
 
-    # Print the human-readable summary
+    # Success path — bundle_path is a real review_bundle.json path
     if bundle_path and Path(bundle_path).exists():
         bundle = ReviewBundleManifest.model_validate_json(Path(bundle_path).read_text())
         print()
         print(generate_human_readable_summary(bundle))
+        sys.exit(0)
+
+    # Failure path — bundle_path is an error string (or None) from run_pipeline
+    print()
+    print("=" * 60)
+    print("PIPELINE FAILED")
+    print("=" * 60)
+    if bundle_path:
+        print(bundle_path)
+    else:
+        print("Pipeline returned no bundle path.")
+    print()
+    print("Check job logs for details:")
+    print("  jobs/<job_id>/manifest.json")
+    print("  jobs/<job_id>/logs/status_log.jsonl")
+    sys.exit(1)
 
 
 if __name__ == "__main__":
