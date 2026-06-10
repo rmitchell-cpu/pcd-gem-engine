@@ -432,6 +432,33 @@ def rerun_stage(job_id: str, stage_name: str) -> StageResult:
         context["angle_brief"] = ab.model_dump_json(indent=2)
         context["prescreen_report"] = gk.model_dump_json(indent=2)
 
+    if stage_name == "eval_voice":
+        an = load_artifact(job_id, "02_deck_analysis", AnalystExtraction)
+        ab = load_artifact(job_id, "03_angle_brief", AngleBrief)
+        em = load_artifact(job_id, "06_lp_emails", LPEmails)
+        context["lp_emails"] = em.model_dump_json(indent=2)
+        context["analyst_extraction_report"] = an.model_dump_json(indent=2)
+        context["angle_brief"] = ab.model_dump_json(indent=2)
+
+    if stage_name == "eval_cross_stage":
+        gk = load_artifact(job_id, "prescreen", PrescreenReport)
+        an = load_artifact(job_id, "02_deck_analysis", AnalystExtraction)
+        ab = load_artifact(job_id, "03_angle_brief", AngleBrief)
+        em = load_artifact(job_id, "06_lp_emails", LPEmails)
+        dc = load_artifact(job_id, "05_deal_card", DealCard)
+        context["prescreen_report"] = gk.model_dump_json(indent=2)
+        context["analyst_extraction_report"] = an.model_dump_json(indent=2)
+        context["angle_brief"] = ab.model_dump_json(indent=2)
+        context["lp_emails"] = em.model_dump_json(indent=2)
+        context["deal_card"] = dc.model_dump_json(indent=2)
+
+    if not context:
+        raise ValueError(
+            f"rerun_stage: unknown or unsupported stage_name {stage_name!r}. "
+            "Supported: prescreen, 02_deck_analysis, 03_angle_brief, "
+            "04_preqin_taxonomy, 05_deal_card, 06_lp_emails, eval_voice, eval_cross_stage."
+        )
+
     result = run_stage(stage_name, job_id, context)
     return result
 

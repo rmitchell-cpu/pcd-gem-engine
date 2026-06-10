@@ -154,6 +154,7 @@ def run_stage(
 
     client = _get_client()
     last_error = None
+    rate_retries = 0
 
     for attempt in range(MAX_STAGE_RETRIES + 1):
         try:
@@ -230,13 +231,12 @@ def run_stage(
                 )
 
         except anthropic.RateLimitError as e:
-            # Rate limited — wait and retry (up to 3 times)
+            # Rate limited — wait and retry (up to 3 times per stage invocation)
             import time
-            rate_retries = getattr(run_stage, '_rate_retries', 0)
             if rate_retries < 3:
-                run_stage._rate_retries = rate_retries + 1
-                wait = 30 * (rate_retries + 1)  # 30s, 60s, 90s
-                print(f"  [rate-limit] Waiting {wait}s before retry ({rate_retries + 1}/3)...")
+                rate_retries += 1
+                wait = 30 * rate_retries  # 30s, 60s, 90s
+                print(f"  [rate-limit] Waiting {wait}s before retry ({rate_retries}/3)...")
                 time.sleep(wait)
                 continue  # Retry the same attempt
             return StageResult(

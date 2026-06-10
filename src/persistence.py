@@ -11,7 +11,7 @@ import json
 import shutil
 import traceback
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, Type
 
@@ -48,7 +48,7 @@ def _sb_upsert_job(job_id: str, data: dict):
         if client is None:
             return
         data["job_id"] = job_id
-        data["updated_at"] = datetime.utcnow().isoformat()
+        data["updated_at"] = datetime.now(timezone.utc).isoformat()
         client.table("pipeline_jobs").upsert(data, on_conflict="job_id").execute()
     except Exception as e:
         print(f"  [supabase] pipeline_jobs upsert warning: {e}")
@@ -60,12 +60,13 @@ def _sb_insert_artifact(job_id: str, stage_name: str, artifact_data: dict):
         client = _sb()
         if client is None:
             return
+        # Note: do NOT include created_at — upsert would overwrite the original
+        # insertion time on re-runs. The column has DEFAULT now() in the schema.
         client.table("pipeline_artifacts").upsert(
             {
                 "job_id": job_id,
                 "stage_name": stage_name,
                 "data": artifact_data,
-                "created_at": datetime.utcnow().isoformat(),
             },
             on_conflict="job_id,stage_name",
         ).execute()
@@ -174,11 +175,11 @@ def create_job(deck_path: str) -> JobManifest:
     _write_manifest(job_dir, manifest)
 
     # --- Supabase: create pipeline_jobs row + upload deck ---
+    # created_at is set by the schema's DEFAULT now() — don't override here.
     _sb_upsert_job(job_id, {
         "fund_name": None,
         "deck_filename": src.name,
         "state": WorkflowState.UPLOADED.value,
-        "created_at": now.isoformat(),
     })
     storage_path = _sb_upload_deck(job_id, deck_path)
     if storage_path:
