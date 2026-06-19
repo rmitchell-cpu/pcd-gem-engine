@@ -13,6 +13,9 @@ build/
 # Jobs (local filesystem cache — data lives in Supabase)
 jobs/
 
+# Generated point-in-time snapshot artifacts (the demo example is committed)
+artifacts/
+
 # IDE
 .vscode/
 .idea/
