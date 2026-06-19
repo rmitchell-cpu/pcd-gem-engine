@@ -1,0 +1,31 @@
+{
+  "portal_id": "4736253",
+  "current": [
+    {
+      "email": {"id": "101", "name": "Weekly Digest #42", "subject": "Your weekly market read", "state": "PUBLISHED", "type": "BATCH_EMAIL", "publishDate": "2026-06-18T14:00:00Z"},
+      "statistics": {"statistics": {"counters": {"sent": 1000, "delivered": 950, "open": 380, "click": 95, "bounce": 50, "unsubscribed": 5}}}
+    },
+    {
+      "email": {"id": "102", "name": "Product Launch Announcement", "subject": "Introducing GEM v2", "state": "PUBLISHED", "type": "BATCH_EMAIL", "publishDate": "2026-06-18T09:30:00Z"},
+      "statistics": {"statistics": {"counters": {"sent": 2000, "delivered": 1900, "open": 760, "click": 190, "bounce": 100, "unsubscribed": 10}}}
+    },
+    {
+      "email": {"id": "103", "name": "Re-engagement Nudge", "subject": "We miss you", "state": "PUBLISHED", "type": "AB_EMAIL", "publishDate": "2026-06-17T16:00:00Z"},
+      "statistics": {"statistics": {"counters": {"sent": 500, "delivered": 480, "open": 120, "click": 24, "bounce": 20, "unsubscribed": 2}}}
+    }
+  ],
+  "prior": [
+    {
+      "email": {"id": "090", "name": "Prior Period Blast", "subject": "Old news", "state": "PUBLISHED", "type": "BATCH_EMAIL", "publishDate": "2026-05-20T12:00:00Z"},
+      "statistics": {"statistics": {"counters": {"sent": 1000, "delivered": 960, "open": 300, "click": 60, "bounce": 40, "unsubscribed": 8}}}
+    }
+  ],
+  "aggregate": {
+    "aggregate": {
+      "statistics": {
+        "counters": {"sent": 3500, "delivered": 3330, "open": 1260, "click": 309, "bounce": 170, "unsubscribed": 17},
+        "ratios": {"openratio": 37.84, "clickratio": 9.28, "clickthroughratio": 24.52, "bounceratio": 4.86, "unsubscribedratio": 0.51}
+      }
+    }
+  }
+}

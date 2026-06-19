@@ -1,0 +1,155 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HubSpot Email Daily Snapshot — 2026-05-20 to 2026-06-19</title><style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--fg:#e2e8f0;--muted:#94a3b8;
+--good:#34d399;--bad:#f87171;--accent:#38bdf8;--head:#0b1220}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1280px;margin:0 auto;padding:24px}
+header h1{margin:0 0 4px;font-size:22px}
+.stamp{color:var(--muted);font-size:13px;margin-bottom:20px}
+.stamp b{color:var(--fg)}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.kpi-label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.kpi-value{font-size:26px;font-weight:650;margin:4px 0}
+.kpi-trend{font-size:12px}
+.kpi-trend.good,.kpi-trend.up{color:var(--good)}
+.kpi-trend.bad,.kpi-trend.down{color:var(--bad)}
+.kpi-trend.flat,.kpi-trend.neutral{color:var(--muted)}
+h2{margin:28px 0 10px;font-size:17px}
+.muted{color:var(--muted);font-weight:400;font-size:13px}
+.controls{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.controls input,.controls select{background:var(--card);color:var(--fg);
+border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px}
+.controls input{min-width:280px}
+table.data{width:100%;border-collapse:collapse;background:var(--card);
+border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}
+table.data th,table.data td{padding:9px 11px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+table.data th:first-child,table.data td:first-child,
+table.data th:nth-child(2),table.data td:nth-child(2),
+table.data th:nth-child(3),table.data td:nth-child(3),
+table.data td:nth-child(4),table.data th:nth-child(4){text-align:left}
+table.data thead th{background:var(--head);position:sticky;top:0;color:var(--muted);
+font-weight:600;cursor:pointer;user-select:none}
+table.sortable thead th:hover{color:var(--accent)}
+table.data thead th.sorted-asc::after{content:" ▲";color:var(--accent)}
+table.data thead th.sorted-desc::after{content:" ▼";color:var(--accent)}
+table.data tbody tr:hover{background:#243043}
+.verify{margin:18px 0;border-radius:10px;border:1px solid var(--line);background:var(--card);padding:4px 14px}
+.verify summary{cursor:pointer;padding:10px 0;list-style:none}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-weight:700;font-size:12px;margin-right:8px}
+.badge.ok{background:rgba(52,211,153,.15);color:var(--good);border:1px solid var(--good)}
+.badge.fail{background:rgba(248,113,113,.15);color:var(--bad);border:1px solid var(--bad)}
+.verify-table{width:100%;border-collapse:collapse;margin:8px 0 14px;font-size:13px}
+.verify-table td,.verify-table th{padding:6px 8px;text-align:left;border-bottom:1px solid var(--line)}
+.verify-table tr.ok td:first-child{color:var(--good)}
+.verify-table tr.fail td:first-child{color:var(--bad)}
+footer{color:var(--muted);font-size:12px;margin-top:30px}
+</style></head><body><div class="wrap"><header><h1>HubSpot Marketing Email — Daily Snapshot</h1><div class="stamp">Point-in-time snapshot generated <b>2026-06-19 12:53:22 UTC</b> · Window <b>2026-05-20 → 2026-06-19</b> (last 30 days) · Prior period <b>2026-04-20 → 2026-05-20</b> · Portal <b>4736253</b></div></header>
+    <section class="verify ok">
+      <details >
+        <summary><span class="badge ok">VERIFICATION: PASS</span>
+        <span class="muted">numbers reconciled against the HubSpot API — click to expand</span></summary>
+        <table class="verify-table">
+          <thead><tr><th></th><th>Check</th><th>Detail</th></tr></thead>
+          <tbody><tr class="ok"><td>✓</td><td>Daily groups reconcile to rollup</td><td>per-day counter sums == flat rollup</td></tr><tr class="ok"><td>✓</td><td>Counter &#x27;sent&#x27; vs API aggregate</td><td>rollup=3,500 api=3,500</td></tr><tr class="ok"><td>✓</td><td>Counter &#x27;delivered&#x27; vs API aggregate</td><td>rollup=3,330 api=3,330</td></tr><tr class="ok"><td>✓</td><td>Counter &#x27;open&#x27; vs API aggregate</td><td>rollup=1,260 api=1,260</td></tr><tr class="ok"><td>✓</td><td>Counter &#x27;click&#x27; vs API aggregate</td><td>rollup=309 api=309</td></tr><tr class="ok"><td>✓</td><td>Counter &#x27;bounce&#x27; vs API aggregate</td><td>rollup=170 api=170</td></tr><tr class="ok"><td>✓</td><td>Counter &#x27;unsubscribed&#x27; vs API aggregate</td><td>rollup=17 api=17</td></tr><tr class="ok"><td>✓</td><td>Rate &#x27;open_rate&#x27; vs API ratio</td><td>recomputed=37.84% api=37.84% (tol 0.5pp)</td></tr><tr class="ok"><td>✓</td><td>Rate &#x27;click_rate&#x27; vs API ratio</td><td>recomputed=9.28% api=9.28% (tol 0.5pp)</td></tr><tr class="ok"><td>✓</td><td>Rate &#x27;ctor&#x27; vs API ratio</td><td>recomputed=24.52% api=24.52% (tol 0.5pp)</td></tr><tr class="ok"><td>✓</td><td>Rate &#x27;bounce_rate&#x27; vs API ratio</td><td>recomputed=4.86% api=4.86% (tol 0.5pp)</td></tr><tr class="ok"><td>✓</td><td>Rate &#x27;unsub_rate&#x27; vs API ratio</td><td>recomputed=0.51% api=0.51% (tol 0.5pp)</td></tr></tbody>
+        </table>
+      </details>
+    </section><section class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-label">Sent</div>
+          <div class="kpi-value">3,500</div>
+          <div class="kpi-trend up">▲ +250.0% vs prior 30d</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Delivered</div>
+          <div class="kpi-value">3,330</div>
+          <div class="kpi-trend up">▲ +246.9% vs prior 30d</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Open rate</div>
+          <div class="kpi-value">37.84%</div>
+          <div class="kpi-trend good">▲ +6.59pp vs prior 30d</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Click rate</div>
+          <div class="kpi-value">9.28%</div>
+          <div class="kpi-trend good">▲ +3.03pp vs prior 30d</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">CTOR</div>
+          <div class="kpi-value">24.52%</div>
+          <div class="kpi-trend good">▲ +4.52pp vs prior 30d</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Bounce rate</div>
+          <div class="kpi-value">4.86%</div>
+          <div class="kpi-trend bad">▲ +0.86pp vs prior 30d</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Unsub rate</div>
+          <div class="kpi-value">0.51%</div>
+          <div class="kpi-trend good">▼ -0.32pp vs prior 30d</div>
+        </div></section>
+    <h2>Daily summary</h2>
+    <table class="data sortable" id="daily">
+      <thead><tr><th data-type="text">Day</th><th data-type="num">Emails</th><th data-type="num">Sent</th><th data-type="num">Delivered</th><th data-type="num">Opens</th><th data-type="num">Clicks</th><th data-type="num">Open %</th><th data-type="num">Click %</th><th data-type="num">CTOR %</th><th data-type="num">Bounce %</th><th data-type="num">Unsub %</th></tr></thead>
+      <tbody><tr><td data-sort="2026-06-18">2026-06-18</td><td data-sort="2">2</td><td data-sort="3000">3,000</td><td data-sort="2850">2,850</td><td data-sort="1140">1,140</td><td data-sort="285">285</td><td data-sort="0.4">40.00%</td><td data-sort="0.1">10.00%</td><td data-sort="0.25">25.00%</td><td data-sort="0.05">5.00%</td><td data-sort="0.005263157894736842">0.53%</td></tr><tr><td data-sort="2026-06-17">2026-06-17</td><td data-sort="1">1</td><td data-sort="500">500</td><td data-sort="480">480</td><td data-sort="120">120</td><td data-sort="24">24</td><td data-sort="0.25">25.00%</td><td data-sort="0.05">5.00%</td><td data-sort="0.2">20.00%</td><td data-sort="0.04">4.00%</td><td data-sort="0.004166666666666667">0.42%</td></tr></tbody>
+    </table>
+    <h2>Per-email detail <span class="muted">(3 emails)</span></h2>
+    <div class="controls">
+      <input type="search" id="filter" placeholder="Filter by name, subject, state…">
+      <select id="dayFilter"><option value="">All days</option><option value="2026-06-18">2026-06-18</option><option value="2026-06-17">2026-06-17</option></select>
+      <span class="muted" id="rowCount"></span>
+    </div>
+    <table class="data sortable filterable" id="detail">
+      <thead><tr><th data-type="text">Day</th><th data-type="text">Email</th><th data-type="text">Subject</th><th data-type="text">State</th><th data-type="num">Sent</th><th data-type="num">Delivered</th><th data-type="num">Opens</th><th data-type="num">Clicks</th><th data-type="num">Bounces</th><th data-type="num">Unsubs</th><th data-type="num">Open %</th><th data-type="num">Click %</th><th data-type="num">CTOR %</th><th data-type="num">Bounce %</th><th data-type="num">Unsub %</th></tr></thead>
+      <tbody><tr data-day="2026-06-18"><td data-sort="2026-06-18">2026-06-18</td><td data-sort="product launch announcement">Product Launch Announcement</td><td data-sort="introducing gem v2">Introducing GEM v2</td><td data-sort="published">PUBLISHED</td><td data-sort="2000">2,000</td><td data-sort="1900">1,900</td><td data-sort="760">760</td><td data-sort="190">190</td><td data-sort="100">100</td><td data-sort="10">10</td><td data-sort="0.4">40.00%</td><td data-sort="0.1">10.00%</td><td data-sort="0.25">25.00%</td><td data-sort="0.05">5.00%</td><td data-sort="0.005263157894736842">0.53%</td></tr><tr data-day="2026-06-18"><td data-sort="2026-06-18">2026-06-18</td><td data-sort="weekly digest #42">Weekly Digest #42</td><td data-sort="your weekly market read">Your weekly market read</td><td data-sort="published">PUBLISHED</td><td data-sort="1000">1,000</td><td data-sort="950">950</td><td data-sort="380">380</td><td data-sort="95">95</td><td data-sort="50">50</td><td data-sort="5">5</td><td data-sort="0.4">40.00%</td><td data-sort="0.1">10.00%</td><td data-sort="0.25">25.00%</td><td data-sort="0.05">5.00%</td><td data-sort="0.005263157894736842">0.53%</td></tr><tr data-day="2026-06-17"><td data-sort="2026-06-17">2026-06-17</td><td data-sort="re-engagement nudge">Re-engagement Nudge</td><td data-sort="we miss you">We miss you</td><td data-sort="published">PUBLISHED</td><td data-sort="500">500</td><td data-sort="480">480</td><td data-sort="120">120</td><td data-sort="24">24</td><td data-sort="20">20</td><td data-sort="2">2</td><td data-sort="0.25">25.00%</td><td data-sort="0.05">5.00%</td><td data-sort="0.2">20.00%</td><td data-sort="0.04">4.00%</td><td data-sort="0.004166666666666667">0.42%</td></tr></tbody>
+    </table><footer>Rates computed from raw counts: open=opens/delivered, click=clicks/delivered, CTOR=clicks/opens, bounce=bounces/sent, unsub=unsubs/delivered. Generated by pcd-gem-engine / hubspot_snapshot. Source records: 3 emails across 2 send-days.</footer><script>
+(function(){
+  // Click-to-sort for any table.sortable.
+  document.querySelectorAll('table.sortable').forEach(function(table){
+    var ths = table.tHead.rows[0].cells;
+    Array.prototype.forEach.call(ths, function(th, idx){
+      th.addEventListener('click', function(){
+        var numeric = th.getAttribute('data-type') === 'num';
+        var asc = !th.classList.contains('sorted-asc');
+        Array.prototype.forEach.call(ths, function(o){o.classList.remove('sorted-asc','sorted-desc');});
+        th.classList.add(asc ? 'sorted-asc' : 'sorted-desc');
+        var rows = Array.prototype.slice.call(table.tBodies[0].rows);
+        rows.sort(function(a,b){
+          var x=a.cells[idx].getAttribute('data-sort'), y=b.cells[idx].getAttribute('data-sort');
+          if(numeric){x=parseFloat(x)||0;y=parseFloat(y)||0;return asc?x-y:y-x;}
+          x=(x||'').toString();y=(y||'').toString();
+          return asc?x.localeCompare(y):y.localeCompare(x);
+        });
+        rows.forEach(function(r){table.tBodies[0].appendChild(r);});
+      });
+    });
+  });
+
+  // Live text + day filtering for the detail table.
+  var detail=document.getElementById('detail');
+  var filter=document.getElementById('filter');
+  var dayFilter=document.getElementById('dayFilter');
+  var counter=document.getElementById('rowCount');
+  function applyFilter(){
+    if(!detail) return;
+    var q=(filter && filter.value || '').toLowerCase().trim();
+    var day=dayFilter && dayFilter.value || '';
+    var shown=0, rows=detail.tBodies[0].rows;
+    for(var i=0;i<rows.length;i++){
+      var r=rows[i];
+      var matchDay=!day || r.getAttribute('data-day')===day;
+      var matchText=!q || r.textContent.toLowerCase().indexOf(q)>-1;
+      var vis=matchDay && matchText;
+      r.style.display=vis?'':'none';
+      if(vis) shown++;
+    }
+    if(counter) counter.textContent=shown+' shown';
+  }
+  if(filter) filter.addEventListener('input', applyFilter);
+  if(dayFilter) dayFilter.addEventListener('change', applyFilter);
+  applyFilter();
+})();
+</script></div></body></html>
