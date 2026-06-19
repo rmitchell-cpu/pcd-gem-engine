@@ -61,15 +61,17 @@ class HubSpotClient:
     def _get(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         url = self.base_url + path
         if params:
-            # Drop None values; lists are joined with commas (HubSpot convention).
-            clean: dict[str, str] = {}
+            # Drop None values. Lists are emitted as repeated params (e.g.
+            # ?emailIds=1&emailIds=2) — HubSpot's statistics endpoints reject
+            # comma-joined multi-values with "Unable to parse value".
+            clean: list[tuple[str, str]] = []
             for key, value in params.items():
                 if value is None:
                     continue
                 if isinstance(value, (list, tuple)):
-                    clean[key] = ",".join(str(v) for v in value)
+                    clean.extend((key, str(v)) for v in value)
                 else:
-                    clean[key] = str(value)
+                    clean.append((key, str(value)))
             url += "?" + urllib.parse.urlencode(clean)
 
         backoff = 2.0
@@ -123,10 +125,19 @@ class HubSpotClient:
     def email_statistics(
         self, email_id: str, start_ms: int, end_ms: int
     ) -> dict[str, Any]:
-        """Per-email statistics within the window."""
+        """Per-email statistics within the window.
+
+        HubSpot has no per-email ``/{id}/statistics`` resource; per-email
+        figures come from the aggregate ``statistics/list`` endpoint filtered
+        to a single ``emailIds`` value.
+        """
         return self._get(
-            f"/marketing/v3/emails/{email_id}/statistics",
-            {"startTimestamp": start_ms, "endTimestamp": end_ms},
+            "/marketing/v3/emails/statistics/list",
+            {
+                "startTimestamp": _iso_ms(start_ms),
+                "endTimestamp": _iso_ms(end_ms),
+                "emailIds": email_id,
+            },
         )
 
     def aggregate_statistics(
@@ -136,11 +147,24 @@ class HubSpotClient:
         return self._get(
             "/marketing/v3/emails/statistics/list",
             {
-                "startTimestamp": start_ms,
-                "endTimestamp": end_ms,
+                "startTimestamp": _iso_ms(start_ms),
+                "endTimestamp": _iso_ms(end_ms),
                 "emailIds": email_ids or None,
             },
         )
+
+
+# -- timestamp helpers ----------------------------------------------------
+def _iso_ms(ms: int) -> str:
+    """Epoch milliseconds -> ISO-8601 UTC string.
+
+    The Marketing Email ``statistics/list`` endpoint rejects raw epoch
+    millisecond integers ("Unable to parse value for query parameter:
+    startTimestamp") and expects an ISO-8601 datetime.
+    """
+    return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
+    )
 
 
 # -- normalisation helpers ------------------------------------------------
