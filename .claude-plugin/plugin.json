@@ -1,0 +1,15 @@
+{
+  "name": "pcd-gem-engine",
+  "description": "Operate the PCD Concierge pipeline from Claude Code: run decks through the pipeline, rerun individual stages, inspect job status, run DB migrations, and start the dashboard.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Capital Mobilization"
+  },
+  "repository": "https://github.com/rmitchell-cpu/pcd-gem-engine",
+  "keywords": [
+    "pipeline",
+    "gp-decks",
+    "supabase",
+    "anthropic"
+  ]
+}
