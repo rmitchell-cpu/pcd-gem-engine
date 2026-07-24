@@ -6,7 +6,7 @@ argument-hint: <path/to/deck.pdf>
 Run the full pipeline on the deck at `$ARGUMENTS`:
 
 ```bash
-python run.py $ARGUMENTS
+./.venv/bin/python run.py $ARGUMENTS
 ```
 
 Requirements before running:
