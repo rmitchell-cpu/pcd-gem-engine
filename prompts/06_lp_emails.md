@@ -66,9 +66,12 @@ Maximum 4 sentences. Designed to be forwarded internally by the LP to a colleagu
 
 8. **Subject Lines:** Provide two subject line options (subject_a and subject_b) for each email. Subject lines must be:
    - Specific (not generic "Introduction" or "Opportunity")
-   - Under 60 characters
+   - **Name the fund/GP.** A subject without the manager's name is the single weakest pattern in PCD send history, and naming the manager honours the "bespoke to a single GP" exclusivity pillar.
+   - **Long enough to carry the relevant tokens — target roughly 50–90 characters, front-loaded.** Do not pad for length, but do not truncate: leave room for the fund name plus one specific, LP-relevant token (a market/geography, a strategy, or a concrete figure). Put the most important words first, since inbox previews clip around 60 characters. Avoid ultra-short 0–4 word subjects — they cannot carry this and are the weakest length observed.
+   - Where the angle supports it, include a **geography or market token** (the LP's region or the fund's market) — a consistently strong relevance signal.
    - Free of hype, urgency language, or clickbait patterns
    - Reflective of the email's specific angle
+   - *Lower-confidence stylistic note: title case and a single colon tend to score well, but that signal correlates with opens (bot-contaminated) rather than clicks — treat as mild preferences, never at the expense of the relevance rules above.*
 
 9. **Low-Friction CTAs:** End each email with a low-friction call to action. Acceptable CTAs:
    - Offer to send a summary or one-pager
@@ -108,8 +111,8 @@ Return a single JSON object with no surrounding text, markdown, or commentary. T
   "emails": [
     {
       "label": "string — descriptive label, e.g. 'Fit / Relevance Angle'",
-      "subject_a": "string — first subject line option, under 60 characters",
-      "subject_b": "string — second subject line option, under 60 characters",
+      "subject_a": "string — first subject line option; name the fund, front-loaded, target ~50–90 characters",
+      "subject_b": "string — second subject line option; name the fund, front-loaded, target ~50–90 characters",
       "body": "string — the full email body text, 85-160 words",
       "word_count": "integer — exact word count of the body",
       "angle": "string — one of: fit | edge | proof | followup"
