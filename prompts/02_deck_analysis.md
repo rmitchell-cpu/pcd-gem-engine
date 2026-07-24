@@ -78,7 +78,7 @@ List every material information gap identified during extraction. These are fact
 
 ## INSTRUCTIONS
 
-You will receive the text content of a GP fund manager deck. Extract all material information into the structured framework above. Return your extraction as a single JSON object matching the schema below. Do not include any text outside the JSON object.
+You will receive the text content of a GP fund manager deck. You may also receive a `<fund_extract>` block containing structured fund terms extracted from the same deck by an upstream stage; use it as a cross-reference for fund mechanics, fee terms, and track record figures, and record any discrepancy between it and your own reading of the deck in `information_gaps`. If no `<fund_extract>` block is present, proceed from the deck text alone. Extract all material information into the structured framework above. Return your extraction as a single JSON object matching the schema below. Do not include any text outside the JSON object.
 
 For all string fields: provide substantive extracted content from the deck, or "[Information Not Available in Deck]" if absent. Never leave a field empty or null when information exists in the deck.
 

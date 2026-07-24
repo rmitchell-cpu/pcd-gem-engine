@@ -1,24 +1,20 @@
-"""
-Stage 01: Fund Extract (JSON John)
+"""Stage 01: Fund Extract (JSON John) — structured fund-terms extraction.
 
-Structured JSON extraction of fund mechanics, terms, strategy, and historical
-track record from the GP deck. Output is the verified-facts ground truth used
-by all downstream stages.
-
-This stage is currently a stub. Full implementation is pending the prompt
-file at prompts/01_fund_extract.md being completed.
+Produces the verified-facts ground truth (fund mechanics, mandate, target
+returns, strategy-specific metrics, track record, qualitative drivers)
+consumed by downstream stages.
 """
 
-stage_name = "01_fund_extract"
+from src.models import StageResult
+from src.persistence import load_parsed_text
+from src.stage_runner import run_stage
 
 
-def run(deck_text: str, deck_path: str = None) -> dict:
-    """
-    Run the fund extraction stage.
-
-    Returns a dict matching the JSON John schema.
-    """
-    raise NotImplementedError(
-        "01_fund_extract stage is a placeholder. "
-        "Implement after orchestrator rename pass is verified."
+def execute(job_id: str) -> StageResult:
+    """Run the Fund Extract using the parsed deck text."""
+    parsed = load_parsed_text(job_id)
+    return run_stage(
+        stage_name="01_fund_extract",
+        job_id=job_id,
+        context={"deck_text": parsed["full_text"]},
     )

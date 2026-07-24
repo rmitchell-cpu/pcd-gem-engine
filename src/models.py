@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import enum
 from datetime import datetime
-from typing import Optional
+from typing import Annotated, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, BeforeValidator, Field
 
 
 # ---------------------------------------------------------------------------
@@ -18,6 +18,7 @@ class WorkflowState(str, enum.Enum):
     PARSED = "parsed"
     PRESCREEN_COMPLETE = "prescreen_complete"
     REJECTED_CHALLENGING = "rejected_challenging"
+    FUND_EXTRACT_COMPLETE = "fund_extract_complete"
     ANALYST_COMPLETE = "analyst_complete"
     ANGLE_BRIEF_COMPLETE = "angle_brief_complete"
     TAXONOMY_COMPLETE = "taxonomy_complete"
@@ -114,6 +115,143 @@ class PrescreenReport(BaseModel):
     pcd_intervention_viable: bool
     pcd_intervention_detail: str
     proprietary_penalty_applied: bool = False
+
+
+# ---------------------------------------------------------------------------
+# 01_fund_extract: Fund Extract (JSON John)
+# ---------------------------------------------------------------------------
+
+def _stringify(v):
+    # Deck figures often come back as bare numbers (2021, 2.5); artifact
+    # convention is strings-with-units, so coerce rather than fail-and-retry.
+    if isinstance(v, bool):
+        return v
+    if isinstance(v, (int, float)):
+        return str(v)
+    return v
+
+
+def _listify(v):
+    # Accept a lone string or null where a list is expected.
+    if v is None:
+        return []
+    if isinstance(v, str):
+        return [v]
+    return v
+
+
+LenientStr = Annotated[Optional[str], BeforeValidator(_stringify)]
+LenientStrList = Annotated[list[str], BeforeValidator(_listify)]
+
+
+class FundMechanicsAndTerms(BaseModel):
+    Fund_Name: str
+    Strategy_Type: LenientStr = None
+    Target_Fund_Size: LenientStr = None
+    Hard_Cap: LenientStr = None
+    Minimum_Commitment: LenientStr = None
+    Fund_Term: LenientStr = None
+    Investment_Period: LenientStr = None
+    Management_Fee: LenientStr = None
+    Carried_Interest: LenientStr = None
+    Hurdle_Rate: LenientStr = None
+    Catch_Up: LenientStr = None
+    GP_Commitment: LenientStr = None
+
+
+class InvestmentStrategyAndMandate(BaseModel):
+    Sector_Focus: LenientStrList = Field(default_factory=list)
+    Geographic_Focus: LenientStrList = Field(default_factory=list)
+    Stage_Focus: LenientStrList = Field(default_factory=list)
+    Target_Check_Size: LenientStr = None
+    Target_Number_of_Investments: LenientStr = None
+    Target_Ownership: LenientStr = None
+    Follow_On_Reserve: LenientStr = None
+
+
+class TargetReturnsForwardLooking(BaseModel):
+    Target_Gross_IRR: LenientStr = None
+    Target_Net_IRR: LenientStr = None
+    Target_Gross_Multiple: LenientStr = None
+    Target_Net_Multiple: LenientStr = None
+    Target_DPI_Timeline: LenientStr = None
+
+
+class BuyoutPrivateEquityMetrics(BaseModel):
+    Target_EBITDA_Range: LenientStr = None
+    Target_Entry_Multiple: LenientStr = None
+    Max_Leverage_Ratio: LenientStr = None
+    Value_Creation_Levers: LenientStrList = Field(default_factory=list)
+
+
+class InfrastructureRealAssetsMetrics(BaseModel):
+    Target_Cash_Yield: LenientStr = None
+    Contract_Duration: LenientStr = None
+    Asset_Profile: LenientStr = None
+
+
+class PrivateCreditDebtMetrics(BaseModel):
+    Target_LTV: LenientStr = None
+    Target_Cash_Yield: LenientStr = None
+    Seniority_Focus: LenientStr = None
+    Historical_Default_Rate: LenientStr = None
+
+
+class SecondariesMetrics(BaseModel):
+    Target_Discount_to_NAV: LenientStr = None
+    Transaction_Types: LenientStrList = Field(default_factory=list)
+
+
+class StrategySpecificMetrics(BaseModel):
+    Buyout_Private_Equity: Optional[BuyoutPrivateEquityMetrics] = None
+    Infrastructure_Real_Assets: Optional[InfrastructureRealAssetsMetrics] = None
+    Private_Credit_Debt: Optional[PrivateCreditDebtMetrics] = None
+    Secondaries: Optional[SecondariesMetrics] = None
+
+
+class HistoricalTrackRecord(BaseModel):
+    Prior_Fund_Name: LenientStr = None
+    Vintage_Year: LenientStr = None
+    Prior_Committed_Capital: LenientStr = None
+    Prior_Gross_IRR: LenientStr = None
+    Prior_Net_IRR: LenientStr = None
+    Prior_Gross_Multiple: LenientStr = None
+    Prior_Net_Multiple: LenientStr = None
+    Prior_DPI: LenientStr = None
+    Number_of_Exits: LenientStr = None
+
+
+class GPAdvantageAndQualitativeDrivers(BaseModel):
+    Proprietary_Sourcing_Mechanisms: LenientStr = None
+    Platform_Value_Add: LenientStr = None
+    Macro_Tailwinds: LenientStr = None
+
+
+class FundExtract(BaseModel):
+    """Verified-facts ground truth extracted from the GP deck (JSON John).
+
+    Key names mirror the JSON John template verbatim (Capitalized_Underscore)
+    rather than house snake_case — the prompt instructs the model to map
+    "EXACTLY to the following keys", and the artifact is the contract.
+    """
+
+    Fund_Mechanics_and_Terms: FundMechanicsAndTerms
+    Investment_Strategy_and_Mandate: InvestmentStrategyAndMandate = Field(
+        default_factory=InvestmentStrategyAndMandate
+    )
+    Target_Returns_Forward_Looking: TargetReturnsForwardLooking = Field(
+        default_factory=TargetReturnsForwardLooking
+    )
+    Strategy_Specific_Metrics: StrategySpecificMetrics = Field(
+        default_factory=StrategySpecificMetrics
+    )
+    Historical_Track_Record: HistoricalTrackRecord = Field(
+        default_factory=HistoricalTrackRecord
+    )
+    GP_Advantage_and_Qualitative_Drivers: GPAdvantageAndQualitativeDrivers = Field(
+        default_factory=GPAdvantageAndQualitativeDrivers
+    )
+    Extraction_Notes: LenientStrList = Field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------

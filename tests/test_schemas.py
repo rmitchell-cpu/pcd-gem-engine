@@ -13,6 +13,7 @@ from src.models import (
     AngleBrief,
     CrossStageEvalOutput,
     DealCard,
+    FundExtract,
     PrescreenReport,
     LPEmails,
     VoiceEvalOutput,
@@ -70,6 +71,82 @@ def test_analyst_extraction_with_gaps():
     extraction = AnalystExtraction.model_validate(data)
     assert len(extraction.information_gaps) == 2
     assert extraction.market_definition is None
+
+
+def test_fund_extract_full_payload():
+    data = {
+        "Fund_Mechanics_and_Terms": {
+            "Fund_Name": "Acme Growth Fund II",
+            "Strategy_Type": "Venture Capital",
+            "Target_Fund_Size": "US$150M",
+            "Management_Fee": "2% (scaling to 1.5% after year 5)",
+            "Carried_Interest": "20%",
+            "Hurdle_Rate": "8%",
+        },
+        "Investment_Strategy_and_Mandate": {
+            "Sector_Focus": ["DeepTech", "Enterprise Software"],
+            "Geographic_Focus": ["North America"],
+            "Target_Check_Size": "US$3-8M",
+        },
+        "Target_Returns_Forward_Looking": {
+            "Target_Net_IRR": "25%",
+            "Target_Net_Multiple": "3.0x",
+        },
+        "Strategy_Specific_Metrics": {},
+        "Historical_Track_Record": {
+            "Prior_Fund_Name": "Fund I",
+            "Vintage_Year": 2021,
+            "Number_of_Exits": 4,
+        },
+        "GP_Advantage_and_Qualitative_Drivers": {
+            "Macro_Tailwinds": "Onshoring of compute supply chains.",
+        },
+        "Extraction_Notes": ["IRR figures unlabeled; assumed Gross per Rule 2."],
+    }
+    fx = FundExtract.model_validate(data)
+    assert fx.Fund_Mechanics_and_Terms.Fund_Name == "Acme Growth Fund II"
+    # Bare numbers from the LLM are stored as strings
+    assert fx.Historical_Track_Record.Vintage_Year == "2021"
+    assert fx.Historical_Track_Record.Number_of_Exits == "4"
+
+
+def test_fund_extract_minimal_and_lenient_lists():
+    data = {
+        "Fund_Mechanics_and_Terms": {"Fund_Name": "Sparse Fund"},
+        "Investment_Strategy_and_Mandate": {
+            "Sector_Focus": "Healthcare",
+            "Geographic_Focus": None,
+        },
+    }
+    fx = FundExtract.model_validate(data)
+    assert fx.Investment_Strategy_and_Mandate.Sector_Focus == ["Healthcare"]
+    assert fx.Investment_Strategy_and_Mandate.Geographic_Focus == []
+    assert fx.Target_Returns_Forward_Looking.Target_Gross_IRR is None
+    assert fx.Strategy_Specific_Metrics.Buyout_Private_Equity is None
+    assert fx.Extraction_Notes == []
+
+
+def test_fund_extract_conditional_strategy_block():
+    data = {
+        "Fund_Mechanics_and_Terms": {
+            "Fund_Name": "Credit Fund IV",
+            "Strategy_Type": "Private Credit",
+        },
+        "Strategy_Specific_Metrics": {
+            "Private_Credit_Debt": {
+                "Target_LTV": "65%",
+                "Seniority_Focus": "Senior Secured",
+            },
+        },
+    }
+    fx = FundExtract.model_validate(data)
+    assert fx.Strategy_Specific_Metrics.Private_Credit_Debt.Seniority_Focus == "Senior Secured"
+    assert fx.Strategy_Specific_Metrics.Secondaries is None
+
+
+def test_fund_extract_missing_fund_name_rejected():
+    with pytest.raises(Exception):
+        FundExtract.model_validate({"Fund_Mechanics_and_Terms": {}})
 
 
 def test_angle_brief_valid():

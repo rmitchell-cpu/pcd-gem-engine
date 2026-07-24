@@ -1,0 +1,699 @@
+{
+  "$defs": {
+    "BuyoutPrivateEquityMetrics": {
+      "properties": {
+        "Target_EBITDA_Range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Ebitda Range"
+        },
+        "Target_Entry_Multiple": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Entry Multiple"
+        },
+        "Max_Leverage_Ratio": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Leverage Ratio"
+        },
+        "Value_Creation_Levers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Value Creation Levers",
+          "type": "array"
+        }
+      },
+      "title": "BuyoutPrivateEquityMetrics",
+      "type": "object"
+    },
+    "FundMechanicsAndTerms": {
+      "properties": {
+        "Fund_Name": {
+          "title": "Fund Name",
+          "type": "string"
+        },
+        "Strategy_Type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Strategy Type"
+        },
+        "Target_Fund_Size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Fund Size"
+        },
+        "Hard_Cap": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hard Cap"
+        },
+        "Minimum_Commitment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Commitment"
+        },
+        "Fund_Term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fund Term"
+        },
+        "Investment_Period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Investment Period"
+        },
+        "Management_Fee": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Management Fee"
+        },
+        "Carried_Interest": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Carried Interest"
+        },
+        "Hurdle_Rate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hurdle Rate"
+        },
+        "Catch_Up": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Catch Up"
+        },
+        "GP_Commitment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gp Commitment"
+        }
+      },
+      "required": [
+        "Fund_Name"
+      ],
+      "title": "FundMechanicsAndTerms",
+      "type": "object"
+    },
+    "GPAdvantageAndQualitativeDrivers": {
+      "properties": {
+        "Proprietary_Sourcing_Mechanisms": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proprietary Sourcing Mechanisms"
+        },
+        "Platform_Value_Add": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Platform Value Add"
+        },
+        "Macro_Tailwinds": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Macro Tailwinds"
+        }
+      },
+      "title": "GPAdvantageAndQualitativeDrivers",
+      "type": "object"
+    },
+    "HistoricalTrackRecord": {
+      "properties": {
+        "Prior_Fund_Name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prior Fund Name"
+        },
+        "Vintage_Year": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vintage Year"
+        },
+        "Prior_Committed_Capital": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prior Committed Capital"
+        },
+        "Prior_Gross_IRR": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prior Gross Irr"
+        },
+        "Prior_Net_IRR": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prior Net Irr"
+        },
+        "Prior_Gross_Multiple": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prior Gross Multiple"
+        },
+        "Prior_Net_Multiple": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prior Net Multiple"
+        },
+        "Prior_DPI": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prior Dpi"
+        },
+        "Number_of_Exits": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Number Of Exits"
+        }
+      },
+      "title": "HistoricalTrackRecord",
+      "type": "object"
+    },
+    "InfrastructureRealAssetsMetrics": {
+      "properties": {
+        "Target_Cash_Yield": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Cash Yield"
+        },
+        "Contract_Duration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contract Duration"
+        },
+        "Asset_Profile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset Profile"
+        }
+      },
+      "title": "InfrastructureRealAssetsMetrics",
+      "type": "object"
+    },
+    "InvestmentStrategyAndMandate": {
+      "properties": {
+        "Sector_Focus": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sector Focus",
+          "type": "array"
+        },
+        "Geographic_Focus": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Geographic Focus",
+          "type": "array"
+        },
+        "Stage_Focus": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Stage Focus",
+          "type": "array"
+        },
+        "Target_Check_Size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Check Size"
+        },
+        "Target_Number_of_Investments": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Number Of Investments"
+        },
+        "Target_Ownership": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Ownership"
+        },
+        "Follow_On_Reserve": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Follow On Reserve"
+        }
+      },
+      "title": "InvestmentStrategyAndMandate",
+      "type": "object"
+    },
+    "PrivateCreditDebtMetrics": {
+      "properties": {
+        "Target_LTV": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Ltv"
+        },
+        "Target_Cash_Yield": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Cash Yield"
+        },
+        "Seniority_Focus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seniority Focus"
+        },
+        "Historical_Default_Rate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Historical Default Rate"
+        }
+      },
+      "title": "PrivateCreditDebtMetrics",
+      "type": "object"
+    },
+    "SecondariesMetrics": {
+      "properties": {
+        "Target_Discount_to_NAV": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Discount To Nav"
+        },
+        "Transaction_Types": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Transaction Types",
+          "type": "array"
+        }
+      },
+      "title": "SecondariesMetrics",
+      "type": "object"
+    },
+    "StrategySpecificMetrics": {
+      "properties": {
+        "Buyout_Private_Equity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BuyoutPrivateEquityMetrics"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "Infrastructure_Real_Assets": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InfrastructureRealAssetsMetrics"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "Private_Credit_Debt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PrivateCreditDebtMetrics"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "Secondaries": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecondariesMetrics"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "StrategySpecificMetrics",
+      "type": "object"
+    },
+    "TargetReturnsForwardLooking": {
+      "properties": {
+        "Target_Gross_IRR": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Gross Irr"
+        },
+        "Target_Net_IRR": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Net Irr"
+        },
+        "Target_Gross_Multiple": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Gross Multiple"
+        },
+        "Target_Net_Multiple": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Net Multiple"
+        },
+        "Target_DPI_Timeline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Dpi Timeline"
+        }
+      },
+      "title": "TargetReturnsForwardLooking",
+      "type": "object"
+    }
+  },
+  "description": "Verified-facts ground truth extracted from the GP deck (JSON John).\n\nKey names mirror the JSON John template verbatim (Capitalized_Underscore)\nrather than house snake_case \u2014 the prompt instructs the model to map\n\"EXACTLY to the following keys\", and the artifact is the contract.",
+  "properties": {
+    "Fund_Mechanics_and_Terms": {
+      "$ref": "#/$defs/FundMechanicsAndTerms"
+    },
+    "Investment_Strategy_and_Mandate": {
+      "$ref": "#/$defs/InvestmentStrategyAndMandate"
+    },
+    "Target_Returns_Forward_Looking": {
+      "$ref": "#/$defs/TargetReturnsForwardLooking"
+    },
+    "Strategy_Specific_Metrics": {
+      "$ref": "#/$defs/StrategySpecificMetrics"
+    },
+    "Historical_Track_Record": {
+      "$ref": "#/$defs/HistoricalTrackRecord"
+    },
+    "GP_Advantage_and_Qualitative_Drivers": {
+      "$ref": "#/$defs/GPAdvantageAndQualitativeDrivers"
+    },
+    "Extraction_Notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Extraction Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "Fund_Mechanics_and_Terms"
+  ],
+  "title": "FundExtract",
+  "type": "object"
+}

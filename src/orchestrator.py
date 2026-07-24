@@ -20,6 +20,7 @@ from src.models import (
     CrossStageEvalOutput,
     DealCard,
     EvalDecision,
+    FundExtract,
     PrescreenClassification,
     PrescreenReport,
     LPEmails,
@@ -155,27 +156,48 @@ def run_pipeline(deck_path: str, verbose: bool = True) -> str:
         return bundle_path
 
     # ------------------------------------------------------------------
-    # TODO: Insert 01_fund_extract (JSON John) stage here when JSON John
-    # is fully implemented. This stage produces the verified-facts ground
-    # truth (Fund_Mechanics_and_Terms, etc.) consumed by 02_deck_analysis
-    # and downstream stages. See src/stages/01_fund_extract.py and
-    # prompts/01_fund_extract.md for current placeholder.
+    # Step 3: 01_fund_extract — Fund Extract (JSON John)
     # ------------------------------------------------------------------
+    # Fail-soft: the extract is ground-truth context for downstream stages,
+    # but every consumer (renderer, web UI, bundle) treats it as optional,
+    # so a failure here degrades the run rather than killing it.
+    _print("[01_fund_extract] Running Fund Extract (JSON John)...")
+    fund_extract_json: str | None = None
+    fx_result = run_stage("01_fund_extract", job_id, {"deck_text": deck_text})
+    if fx_result.success:
+        _log_and_update(job_id, "01_fund_extract", WorkflowState.PRESCREEN_COMPLETE,
+                        WorkflowState.FUND_EXTRACT_COMPLETE, fx_result)
+        fund_extract: FundExtract = load_artifact(job_id, "01_fund_extract", FundExtract)
+        fund_extract_json = fund_extract.model_dump_json(indent=2)
+        _print(f"  Terms extracted for: {fund_extract.Fund_Mechanics_and_Terms.Fund_Name}"
+               f" ({len(fund_extract.Extraction_Notes)} extraction note(s))")
+    else:
+        log_transition(job_id, "01_fund_extract", WorkflowState.PRESCREEN_COMPLETE,
+                       WorkflowState.PRESCREEN_COMPLETE, "failed", notes=fx_result.error,
+                       model_version=fx_result.model_version, prompt_version=fx_result.prompt_hash)
+        _print(f"  WARNING: 01_fund_extract failed — continuing without it. ({fx_result.error})")
+
+    state_before_analysis = (
+        WorkflowState.FUND_EXTRACT_COMPLETE if fund_extract_json else WorkflowState.PRESCREEN_COMPLETE
+    )
 
     # ------------------------------------------------------------------
-    # Step 3: 02_deck_analysis — Analyst Extractor
+    # Step 4: 02_deck_analysis — Analyst Extractor
     # ------------------------------------------------------------------
     _print("[02_deck_analysis] Running Analyst Extractor...")
-    analyst_result = run_stage("02_deck_analysis", job_id, {"deck_text": deck_text})
+    analyst_context = {"deck_text": deck_text}
+    if fund_extract_json:
+        analyst_context["fund_extract"] = fund_extract_json
+    analyst_result = run_stage("02_deck_analysis", job_id, analyst_context)
     if not analyst_result.success:
-        return _fail(job_id, "02_deck_analysis", analyst_result, WorkflowState.PRESCREEN_COMPLETE)
+        return _fail(job_id, "02_deck_analysis", analyst_result, state_before_analysis)
 
-    _log_and_update(job_id, "02_deck_analysis", WorkflowState.PRESCREEN_COMPLETE, WorkflowState.ANALYST_COMPLETE, analyst_result)
+    _log_and_update(job_id, "02_deck_analysis", state_before_analysis, WorkflowState.ANALYST_COMPLETE, analyst_result)
     analyst: AnalystExtraction = load_artifact(job_id, "02_deck_analysis", AnalystExtraction)
     _print(f"  Gaps found: {len(analyst.information_gaps)}, Interview Qs: {len(analyst.required_interview_questions)}")
 
     # ------------------------------------------------------------------
-    # Step 4: 03_angle_brief — Angle Brief
+    # Step 5: 03_angle_brief — Angle Brief
     # ------------------------------------------------------------------
     _print("[03_angle_brief] Running Angle Brief...")
     gk_json = prescreen_report.model_dump_json(indent=2)
@@ -193,7 +215,7 @@ def run_pipeline(deck_path: str, verbose: bool = True) -> str:
     _print(f"  Primary angle: {angle.primary_angle.value}, CTA: {angle.recommended_cta_type.value}")
 
     # ------------------------------------------------------------------
-    # Step 5: 04_preqin_taxonomy — Taxonomy Ted
+    # Step 6: 04_preqin_taxonomy — Taxonomy Ted
     # ------------------------------------------------------------------
     _print("[04_preqin_taxonomy] Running Taxonomy Ted...")
     taxonomy_result = run_stage("04_preqin_taxonomy", job_id, {
@@ -208,7 +230,7 @@ def run_pipeline(deck_path: str, verbose: bool = True) -> str:
     _print(f"  Tags: {len(taxonomy.canonical_strategy_tags)}, Matrix entries: {len(taxonomy.translation_matrix)}")
 
     # ------------------------------------------------------------------
-    # Step 6: 05_deal_card — Deal Card (Summary Sam)
+    # Step 7: 05_deal_card — Deal Card (Summary Sam)
     # ------------------------------------------------------------------
     _print("[05_deal_card] Running Deal Card (Summary Sam)...")
     taxonomy_json = taxonomy.model_dump_json(indent=2)
@@ -224,7 +246,7 @@ def run_pipeline(deck_path: str, verbose: bool = True) -> str:
     _print("  Deal Card generated.")
 
     # ------------------------------------------------------------------
-    # Step 7: 06_lp_emails — LP Email Drafts
+    # Step 8: 06_lp_emails — LP Email Drafts
     # ------------------------------------------------------------------
     _print("[06_lp_emails] Running LP Email Drafts...")
     angle_json = angle.model_dump_json(indent=2)
@@ -240,7 +262,7 @@ def run_pipeline(deck_path: str, verbose: bool = True) -> str:
     _print("  4 email variants generated.")
 
     # ------------------------------------------------------------------
-    # Step 8: Evaluators
+    # Step 9: Evaluators
     # ------------------------------------------------------------------
     _print("[EVAL] Running Voice Evaluator...")
     emails: LPEmails = load_artifact(job_id, "06_lp_emails", LPEmails)
@@ -277,7 +299,7 @@ def run_pipeline(deck_path: str, verbose: bool = True) -> str:
     _print(f"  Cross-stage eval: {'PASS' if cross_eval.overall_pass else 'REVISE'}")
 
     # ------------------------------------------------------------------
-    # Step 9: Regeneration (if needed)
+    # Step 10: Regeneration (if needed)
     # ------------------------------------------------------------------
     regen_count = 0
     if voice_eval.decision == EvalDecision.REVISE or cross_eval.decision == EvalDecision.REVISE:
@@ -359,7 +381,7 @@ def run_pipeline(deck_path: str, verbose: bool = True) -> str:
                        notes=f"Regen attempts: {regen_count}")
 
     # ------------------------------------------------------------------
-    # Step 10: Assemble review bundle
+    # Step 11: Assemble review bundle
     # ------------------------------------------------------------------
     _print("[BUNDLE] Assembling review bundle...")
     evaluator_passed = voice_eval.overall_pass and cross_eval.overall_pass
@@ -403,8 +425,12 @@ def rerun_stage(job_id: str, stage_name: str) -> StageResult:
     # Build context based on what the stage needs
     context: dict[str, str] = {}
 
-    if stage_name in ("prescreen", "02_deck_analysis"):
+    if stage_name in ("prescreen", "01_fund_extract", "02_deck_analysis"):
         context["deck_text"] = deck_text
+
+    if stage_name == "02_deck_analysis" and artifact_exists(job_id, "01_fund_extract"):
+        fx = load_artifact(job_id, "01_fund_extract", FundExtract)
+        context["fund_extract"] = fx.model_dump_json(indent=2)
 
     if stage_name == "03_angle_brief":
         gk = load_artifact(job_id, "prescreen", PrescreenReport)
@@ -455,7 +481,7 @@ def rerun_stage(job_id: str, stage_name: str) -> StageResult:
     if not context:
         raise ValueError(
             f"rerun_stage: unknown or unsupported stage_name {stage_name!r}. "
-            "Supported: prescreen, 02_deck_analysis, 03_angle_brief, "
+            "Supported: prescreen, 01_fund_extract, 02_deck_analysis, 03_angle_brief, "
             "04_preqin_taxonomy, 05_deal_card, 06_lp_emails, eval_voice, eval_cross_stage."
         )
 

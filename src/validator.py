@@ -11,6 +11,7 @@ from src.models import (
     AngleBrief,
     CrossStageEvalOutput,
     DealCard,
+    FundExtract,
     LPEmails,
     PrescreenReport,
     TaxonomyOutput,
@@ -20,7 +21,7 @@ from src.models import (
 # Maps stage name → Pydantic model class
 STAGE_SCHEMA_MAP: dict[str, Type[BaseModel]] = {
     "prescreen": PrescreenReport,
-    "01_fund_extract": AnalystExtraction,  # placeholder — JSON John schema TBD
+    "01_fund_extract": FundExtract,
     "02_deck_analysis": AnalystExtraction,
     "03_angle_brief": AngleBrief,
     "04_preqin_taxonomy": TaxonomyOutput,
