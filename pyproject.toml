@@ -2,7 +2,7 @@
 name = "pcd-gem-engine"
 version = "0.1.0"
 description = "PCD GEM Concierge Workflow Engine — modular GP deck processing pipeline"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 dependencies = [
     "anthropic>=0.40.0",
     "pydantic>=2.0",
