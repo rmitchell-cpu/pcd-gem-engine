@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCD Marketing Email Snapshot — June 19, 2026</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #222536;
+    --border: #2e3247;
+    --text: #e8eaf0;
+    --text-dim: #8b90a8;
+    --text-muted: #555c7a;
+    --accent: #6366f1;
+    --accent-glow: rgba(99,102,241,0.12);
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,0.1);
+    --yellow: #eab308;
+    --yellow-bg: rgba(234,179,8,0.1);
+    --red: #ef4444;
+    --red-bg: rgba(239,68,68,0.1);
+    --blue: #3b82f6;
+    --blue-bg: rgba(59,130,246,0.1);
+    --purple: #a855f7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .shell {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px 20px 48px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .header-left h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.3px;
+  }
+  .header-left .subtitle {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .stamp {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+  .stamp strong { color: var(--text); }
+
+  /* KPI Cards */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+  .kpi-card .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .kpi-card .value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  .kpi-card .sub {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .trend-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .trend-none { background: var(--surface2); color: var(--text-muted); }
+  .trend-up { background: var(--green-bg); color: var(--green); }
+  .trend-down { background: var(--red-bg); color: var(--red); }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .search-box {
+    flex: 1;
+    min-width: 200px;
+    max-width: 320px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-box:focus { border-color: var(--accent); }
+  .search-box::placeholder { color: var(--text-muted); }
+  .sort-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
+  }
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 14px;
+    color: var(--text-dim);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .filter-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+  .filter-btn:hover { border-color: var(--text-muted); }
+  .results-count {
+    margin-left: auto;
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+
+  /* Day groups */
+  .day-group { margin-bottom: 24px; }
+  .day-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    padding-left: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .day-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Email cards */
+  .email-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .email-card:hover { border-color: #3d4260; }
+  .email-card.no-data { opacity: 0.72; }
+  .card-main {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  .email-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .email-subject {
+    font-size: 12px;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .email-send-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .card-metrics {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .metric {
+    text-align: right;
+    min-width: 56px;
+  }
+  .metric .mlabel {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .metric .mval {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .metric .mval.dash { color: var(--text-muted); font-size: 14px; font-weight: 400; }
+  .mval.good { color: var(--green); }
+  .mval.warn { color: var(--yellow); }
+  .mval.bad { color: var(--red); }
+  .mval.neutral { color: var(--text); }
+  .mval.dim { color: var(--text-dim); }
+  .delivered-badge {
+    background: var(--surface2);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+  .expand-icon {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-left: 8px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .email-card.expanded .expand-icon { transform: rotate(180deg); }
+
+  /* Detail row */
+  .card-detail {
+    border-top: 1px solid var(--border);
+    padding: 14px 18px;
+    display: none;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 14px;
+    background: rgba(0,0,0,0.15);
+  }
+  .email-card.expanded .card-detail { display: grid; }
+  .detail-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .detail-stat .ds-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .detail-stat .ds-val {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .detail-stat .ds-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .no-data-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px dashed var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* Benchmarks legend */
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 18px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Window info bar */
+  .info-bar {
+    background: var(--accent-glow);
+    border: 1px solid rgba(99,102,241,0.25);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .info-bar strong { color: var(--text); }
+
+  @media (max-width: 768px) {
+    .card-metrics { gap: 12px; }
+    .metric { min-width: 44px; }
+    .metric .mval { font-size: 14px; }
+    .kpi-card .value { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <h1>PCD Marketing Email Snapshot</h1>
+      <div class="subtitle">Last 30 days · May 20 – June 19, 2026 · HubSpot Marketing Hub</div>
+    </div>
+    <div class="stamp">Snapshot taken: <strong id="snap-time">June 19, 2026, 9:00 AM ET</strong></div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="label">Emails Published</div>
+      <div class="value" id="kpi-sent">15</div>
+      <div class="sub">
+        <span>3 with send data available</span>
+        <span class="trend-chip trend-none">— vs prior 30d</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Total Delivered</div>
+      <div class="value" id="kpi-delivered">1,594</div>
+      <div class="sub">
+        <span>across 3 measured sends</span>
+        <span class="trend-chip trend-none">— vs prior 30d</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Avg Open Rate</div>
+      <div class="value" id="kpi-open" style="color:#22c55e">30.5%</div>
+      <div class="sub">
+        <span>benchmark: ~25%</span>
+        <span class="trend-chip trend-none">— vs prior 30d</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Avg Click Rate</div>
+      <div class="value" id="kpi-click" style="color:#eab308">1.46%</div>
+      <div class="sub">
+        <span>benchmark: ~2.5%</span>
+        <span class="trend-chip trend-none">— vs prior 30d</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info bar -->
+  <div class="info-bar">
+    <span>&#9432;</span>
+    <span>These are <strong>automated workflow emails</strong>. Of 15 published in the window, <strong>3 have triggered send data</strong>; the remaining 12 are queued or have not yet met workflow enrollment criteria. All metrics reflect real API data — no fabrication.</span>
+  </div>
+
+  <!-- Benchmark legend -->
+  <div class="legend">
+    <span style="color:var(--text);font-weight:600;margin-right:4px">Rate benchmarks (fin. services):</span>
+    <span class="legend-item"><span class="legend-dot" style="background:var(--green)"></span> Good</span>
+    <span class="legend-item"><span class="legend-dot" style="background:var(--yellow)"></span> Avg</span>
+    <span class="legend-item"><span class="legend-dot" style="background:var(--red)"></span> Below avg</span>
+    <span>&nbsp;|&nbsp; Open: &ge;28%&nbsp;&#x1F7E2; / 20-28%&nbsp;&#x1F7E1; / &lt;20%&nbsp;&#x1F534;</span>
+    <span>CTR: &ge;2.5%&nbsp;&#x1F7E2; / 1-2.5%&nbsp;&#x1F7E1; / &lt;1%&nbsp;&#x1F534;</span>
+    <span>Bounce: &lt;1%&nbsp;&#x1F7E2; / 1-2%&nbsp;&#x1F7E1; / &gt;2%&nbsp;&#x1F534;</span>
+    <span>Unsub: &lt;0.3%&nbsp;&#x1F7E2; / 0.3-0.5%&nbsp;&#x1F7E1; / &gt;0.5%&nbsp;&#x1F534;</span>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <input type="text" class="search-box" id="search" placeholder="Search email name or subject…" oninput="applyFilters()">
+    <select class="sort-select" id="sort" onchange="applyFilters()">
+      <option value="date-desc">Sort: Newest first</option>
+      <option value="date-asc">Sort: Oldest first</option>
+      <option value="open-desc">Sort: Open rate ↓</option>
+      <option value="open-asc">Sort: Open rate ↑</option>
+      <option value="click-desc">Sort: Click rate ↓</option>
+    </select>
+    <button class="filter-btn active" id="btn-all" onclick="setFilter('all',this)">All (15)</button>
+    <button class="filter-btn" id="btn-data" onclick="setFilter('data',this)">With data (3)</button>
+    <button class="filter-btn" id="btn-pending" onclick="setFilter('pending',this)">Pending (12)</button>
+    <span class="results-count" id="results-count">15 emails</span>
+  </div>
+
+  <!-- Feed -->
+  <div id="feed"></div>
+
+</div>
+
+<script>
+// ── Raw data from HubSpot API ────────────────────────────────────────────────
+const EMAILS = [
+  {
+    id: "215112879125",
+    name: "Concierge Race Capital 06 26 #4",
+    subject: "[PCD] Race Capital Fund III US$250M: BEA Operator at the AI Control Layer",
+    publishedAt: "2026-06-15T22:53:57Z",
+    state: "AUTOMATED",
+    stats: null
+  },
+  {
+    id: "215112877616",
+    name: "Concierge Race Capital 06 26 #3",
+    subject: "[PCD] Race Capital Fund III US$250M: Seed Discipline in AI Infrastructure",
+    publishedAt: "2026-06-15T22:43:38Z",
+    state: "AUTOMATED",
+    stats: null
+  },
+  {
+    id: "215100776554",
+    name: "Concierge Race Capital 06 26 #2",
+    subject: "[PCD] Race Capital Fund III US$250M: Middleware Operator Underwriting AI Infrastructure",
+    publishedAt: "2026-06-15T22:31:08Z",
+    state: "AUTOMATED",
+    stats: null
+  },
+  {
+    id: "215100904319",
+    name: "Concierge Race Capital 06 26 #1",
+    subject: "[PCD] Race Capital Fund III US$250M: Seed-Stage AI Control Layer in Silicon Valley",
+    publishedAt: "2026-06-15T22:07:10Z",
+    state: "AUTOMATED",
+    stats: { sent: 400, delivered: 396, open: 111, click: 10, bounce: 4, unsubscribed: 2, reply: 1, suppressed: 2474, hardbounced: 1, softbounced: 3 }
+  },
+  {
+    id: "214457091446",
+    name: "Concierge Libratum JUNE '26 #4",
+    subject: "[PCD] Libratum Investment PE Platform with Current Positions in SpaceX and Lambda",
+    publishedAt: "2026-06-05T21:39:52Z",
+    state: "AUTOMATED",
+    stats: null
+  },
+  {
+    id: "214457091406",
+    name: "Concierge Libratum JUNE '26 #3",
+    subject: "[PCD] Asia-Based Libratum Investment PE Platform Live Deals in Quantum Humanoid Robotics and Biomimetic Materials",
+    publishedAt: "2026-06-05T21:38:11Z",
+    state: "AUTOMATED",
+    stats: null
+  },
+  {
+    id: "214425711896",
+    name: "Concierge Libratum JUNE '26 #2",
+    subject: "[PCD] Libratum Investment: Asia-Based PE Platform Investing in Late-Stage Frontier AI Robotics Aerospace and Defense",
+    publishedAt: "2026-06-05T21:36:48Z",
+    state: "AUTOMATED",
+    stats: { sent: 568, delivered: 561, open: 170, click: 6, bounce: 7, unsubscribed: 0, reply: 0, suppressed: 4752, hardbounced: 0, softbounced: 7 }
+  },
+  {
+    id: "214172422287",
+    name: "Concierge DataTribe JUNE '26 #4",
+    subject: "[PCD] DataTribe Fund IV US$200M: Deeply Embedded Nation-State Cyber With Foundry Model",
+    publishedAt: "2026-06-02T19:41:22Z",
+    state: "AUTOMATED",
+    stats: null
+  },
+  {
+    id: "214172422239",
+    name: "Concierge DataTribe JUNE '26 #3",
+    subject: "[PCD] DataTribe Fund IV US$200M: Deeply Embedded Cyber Security Relationships",
+    publishedAt: "2026-06-02T19:40:25Z",
+    state: "AUTOMATED",
+    stats: null
+  },
+  {
+    id: "214172411826",
+    name: "Concierge DataTribe JUNE '26 #2",
+    subject: "[PCD] DataTrive Fund IV US$200M: Sourcing in the “Silicon Valley of Cyber”",
+    publishedAt: "2026-06-02T19:39:20Z",
+    state: "AUTOMATED",
+    stats: null
+  },
+  {
+    id: "213649431111",
+    name: "Concierge Precedent VC JUNE '26 #4",
+    subject: "[PCD] TaskRabbit Founder: Precedent VC Fund I US$50M Seed Investing in AI and Consumer",
+    publishedAt: "2026-05-29T16:16:04Z",
+    state: "AUTOMATED",
+    stats: null
+  },
+  {
+    id: "213649431136",
+    name: "Concierge Precedent VC JUNE '26 #3",
+    subject: "[PCD] Precedent VC Fund I US$50M Best Breakout American Fund by Allocator One",
+    publishedAt: "2026-05-29T16:15:45Z",
+    state: "AUTOMATED",
+    stats: null
+  },
+  {
+    id: "213649442466",
+    name: "Concierge Precedent VC JUNE '26 #2",
+    subject: "[PCD] Precedent VC Fund I US$50M",
+    publishedAt: "2026-05-29T16:15:24Z",
+    state: "AUTOMATED",
+    stats: null
+  },
+  {
+    id: "213710744435",
+    name: "Concierge Ikigai JUNE '26 #4",
+    subject: "[PCD] Ikigai Healthcare Fund III US$10M",
+    publishedAt: "2026-05-27T15:31:04Z",
+    state: "AUTOMATED",
+    stats: null
+  },
+  {
+    id: "213649442996",
+    name: "Concierge Endurance28 JUNE '26 #4",
+    subject: "[PCD] Endurance28 Fund III US$75M Early Stage Deep Tech",
+    publishedAt: "2026-05-27T01:34:56Z",
+    state: "AUTOMATED",
+    stats: { sent: 659, delivered: 637, open: 211, click: 5, bounce: 3, unsubscribed: 0, reply: 0, suppressed: 5343, hardbounced: 0, softbounced: 3 }
+  }
+];
+
+// ── Derived metrics ──────────────────────────────────────────────────────────
+function computeRates(s) {
+  if (!s) return null;
+  const d = s.delivered || 0;
+  const sent = s.sent || 0;
+  return {
+    openRate:    d > 0 ? (s.open / d * 100) : 0,
+    ctr:         d > 0 ? (s.click / d * 100) : 0,
+    ctor:        s.open > 0 ? (s.click / s.open * 100) : 0,
+    bounceRate:  sent > 0 ? (s.bounce / sent * 100) : 0,
+    unsubRate:   sent > 0 ? (s.unsubscribed / sent * 100) : 0
+  };
+}
+
+EMAILS.forEach(e => { e.rates = computeRates(e.stats); });
+
+// ── Colour helpers ───────────────────────────────────────────────────────────
+function openClass(r)   { return r >= 28 ? 'good' : r >= 20 ? 'warn' : 'bad'; }
+function ctrClass(r)    { return r >= 2.5 ? 'good' : r >= 1 ? 'warn' : 'bad'; }
+function ctorClass(r)   { return r >= 8 ? 'good' : r >= 4 ? 'warn' : 'bad'; }
+function bounceClass(r) { return r < 1 ? 'good' : r < 2 ? 'warn' : 'bad'; }
+function unsubClass(r)  { return r < 0.3 ? 'good' : r <= 0.5 ? 'warn' : 'bad'; }
+
+function fmt(n, dec=1) { return n === null || n === undefined ? '—' : n.toFixed(dec) + '%'; }
+function fmtN(n) { if (n === null || n === undefined) return '—'; return n.toLocaleString(); }
+
+// ── Date helpers ─────────────────────────────────────────────────────────────
+function toET(iso) {
+  const d = new Date(iso);
+  // EDT = UTC-4
+  return new Date(d.getTime() - 4 * 3600 * 1000);
+}
+function dayKey(iso) {
+  const d = toET(iso);
+  return d.toISOString().slice(0, 10);
+}
+function dayLabel(key) {
+  const today = new Date();
+  const todayET = new Date(today.getTime() - 4 * 3600 * 1000);
+  const todayKey = todayET.toISOString().slice(0, 10);
+  const yestKey = new Date(todayET.getTime() - 86400000).toISOString().slice(0, 10);
+  if (key === todayKey) return 'Today';
+  if (key === yestKey) return 'Yesterday';
+  const d = new Date(key + 'T12:00:00Z');
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+}
+function timeLabel(iso) {
+  const d = toET(new Date(iso));
+  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) + ' ET';
+}
+function dateFull(iso) {
+  const d = toET(new Date(iso));
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' +
+         d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) + ' ET';
+}
+
+// ── Snapshot timestamp ────────────────────────────────────────────────────────
+(function() {
+  const now = new Date();
+  const et = new Date(now.getTime() - 4 * 3600 * 1000);
+  document.getElementById('snap-time').textContent =
+    et.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) + ', ' +
+    et.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) + ' ET';
+})();
+
+// ── Render ────────────────────────────────────────────────────────────────────
+let activeFilter = 'all';
+
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  const sort = document.getElementById('sort').value;
+
+  let list = EMAILS.filter(e => {
+    const matchQ = !q || e.name.toLowerCase().includes(q) || e.subject.toLowerCase().includes(q);
+    const matchF = activeFilter === 'all' ||
+                   (activeFilter === 'data' && e.stats) ||
+                   (activeFilter === 'pending' && !e.stats);
+    return matchQ && matchF;
+  });
+
+  // Sort
+  list.sort((a, b) => {
+    if (sort === 'date-desc') return new Date(b.publishedAt) - new Date(a.publishedAt);
+    if (sort === 'date-asc')  return new Date(a.publishedAt) - new Date(b.publishedAt);
+    const ra = a.rates, rb = b.rates;
+    if (sort === 'open-desc') {
+      const va = ra ? ra.openRate : -1, vb = rb ? rb.openRate : -1;
+      return vb - va;
+    }
+    if (sort === 'open-asc') {
+      const va = ra ? ra.openRate : Infinity, vb = rb ? rb.openRate : Infinity;
+      return va - vb;
+    }
+    if (sort === 'click-desc') {
+      const va = ra ? ra.ctr : -1, vb = rb ? rb.ctr : -1;
+      return vb - va;
+    }
+    return 0;
+  });
+
+  document.getElementById('results-count').textContent = list.length + ' email' + (list.length !== 1 ? 's' : '');
+  renderFeed(list);
+}
+
+function renderFeed(list) {
+  const feed = document.getElementById('feed');
+
+  if (list.length === 0) {
+    feed.innerHTML = `<div class="empty-state"><div class="icon">&#128269;</div><p>No emails match your search or filter.</p></div>`;
+    return;
+  }
+
+  // Group by day
+  const groups = {};
+  const order = [];
+  for (const e of list) {
+    const k = dayKey(e.publishedAt);
+    if (!groups[k]) { groups[k] = []; order.push(k); }
+    groups[k].push(e);
+  }
+
+  let html = '';
+  for (const k of order) {
+    html += `<div class="day-group" data-day="${k}">`;
+    html += `<div class="day-label">${dayLabel(k)}</div>`;
+    for (const e of groups[k]) {
+      html += renderCard(e);
+    }
+    html += `</div>`;
+  }
+  feed.innerHTML = html;
+}
+
+function renderCard(e) {
+  const r = e.rates;
+  const hasData = !!e.stats;
+  const s = e.stats || {};
+
+  // Primary metrics display
+  const openVal = r ? `<span class="mval ${openClass(r.openRate)}">${r.openRate.toFixed(1)}%</span>` :
+                      `<span class="mval dash">—</span>`;
+  const ctrVal = r ? `<span class="mval ${ctrClass(r.ctr)}">${r.ctr.toFixed(2)}%</span>` :
+                     `<span class="mval dash">—</span>`;
+  const ctorVal = r ? `<span class="mval ${ctorClass(r.ctor)}">${r.ctor.toFixed(1)}%</span>` :
+                      `<span class="mval dash">—</span>`;
+  const bounceVal = r ? `<span class="mval ${bounceClass(r.bounceRate)}">${r.bounceRate.toFixed(2)}%</span>` :
+                        `<span class="mval dash">—</span>`;
+  const unsubVal = r ? `<span class="mval ${unsubClass(r.unsubRate)}">${r.unsubRate.toFixed(2)}%</span>` :
+                       `<span class="mval dash">—</span>`;
+
+  const delivBadge = hasData ?
+    `<div class="delivered-badge">${(s.delivered || 0).toLocaleString()} delivered</div>` :
+    `<div class="no-data-pill">&#8226; Automation pending / not yet sent</div>`;
+
+  // Detail row
+  let detailHtml = '';
+  if (hasData) {
+    detailHtml = `
+      <div class="detail-stat"><div class="ds-label">Sent</div><div class="ds-val">${fmtN(s.sent)}</div><div class="ds-sub">total recipients</div></div>
+      <div class="detail-stat"><div class="ds-label">Delivered</div><div class="ds-val">${fmtN(s.delivered)}</div><div class="ds-sub">${r ? (100-r.bounceRate-((s.dropped||0)/s.sent*100)).toFixed(1) : '—'}% of sent</div></div>
+      <div class="detail-stat"><div class="ds-label">Opens</div><div class="ds-val">${fmtN(s.open)}</div><div class="ds-sub">${r ? r.openRate.toFixed(1) : '—'}% open rate</div></div>
+      <div class="detail-stat"><div class="ds-label">Clicks</div><div class="ds-val">${fmtN(s.click)}</div><div class="ds-sub">${r ? r.ctr.toFixed(2) : '—'}% CTR</div></div>
+      <div class="detail-stat"><div class="ds-label">CTOR</div><div class="ds-val">${r ? r.ctor.toFixed(1)+'%' : '—'}</div><div class="ds-sub">clicks / opens</div></div>
+      <div class="detail-stat"><div class="ds-label">Bounces</div><div class="ds-val">${fmtN(s.bounce)}</div><div class="ds-sub">${r ? r.bounceRate.toFixed(2) : '—'}% bounce rate</div></div>
+      <div class="detail-stat"><div class="ds-label">Unsubs</div><div class="ds-val">${fmtN(s.unsubscribed)}</div><div class="ds-sub">${r ? r.unsubRate.toFixed(2) : '—'}% rate</div></div>
+      <div class="detail-stat"><div class="ds-label">Replies</div><div class="ds-val">${fmtN(s.reply)}</div><div class="ds-sub">&nbsp;</div></div>
+    `;
+  } else {
+    detailHtml = `<div style="color:var(--text-muted);font-size:13px;grid-column:1/-1;padding:8px 0">
+      No send data available — this email is activated in a workflow but has not yet triggered for any recipient in the current window.
+    </div>`;
+  }
+
+  return `
+  <div class="email-card${hasData ? '' : ' no-data'}" id="card-${e.id}">
+    <div class="card-main" onclick="toggleCard('${e.id}')">
+      <div class="card-meta">
+        <div class="email-name">${e.name}</div>
+        <div class="email-subject">${e.subject}</div>
+        <div class="email-send-time">${dateFull(e.publishedAt)}</div>
+      </div>
+      <div class="card-metrics">
+        ${delivBadge}
+        <div class="metric"><div class="mlabel">Open</div>${openVal}</div>
+        <div class="metric"><div class="mlabel">CTR</div>${ctrVal}</div>
+        <div class="metric"><div class="mlabel">CTOR</div>${ctorVal}</div>
+        <div class="metric"><div class="mlabel">Bounce</div>${bounceVal}</div>
+        <div class="metric"><div class="mlabel">Unsub</div>${unsubVal}</div>
+        <span class="expand-icon">&#9660;</span>
+      </div>
+    </div>
+    <div class="card-detail">${detailHtml}</div>
+  </div>`;
+}
+
+function toggleCard(id) {
+  const card = document.getElementById('card-' + id);
+  card.classList.toggle('expanded');
+}
+
+// Initial render
+applyFilters();
+</script>
+</body>
+</html>
