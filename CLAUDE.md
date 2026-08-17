@@ -1,7 +1,7 @@
 ---
 type: sop
 title: pcd-gem-engine — Repository Guide for AI Assistants
-date: 15 August 2026
+date: 17 August 2026
 description: Orientation and working conventions for the PCD Concierge pipeline codebase — architecture, commands, naming authority, and the known drift traps an assistant must not walk into.
 tags:
   - pcd-gem-engine
@@ -278,14 +278,33 @@ silently as a side effect of other work, and do not be misled by them.
    `MODEL = "claude-opus-4-7"`; `.env.example` advertises a `GEM_MODEL` override
    defaulting to `claude-opus-4-6`. `GEM_MODEL` is never read by any code. Changing
    the model means editing `config/settings.py`.
+   Note also that both names are a generation behind the current Claude 5 family
+   (`claude-opus-5`, `claude-sonnet-5`), so every stage runs on the older model.
+   That is the one trap here with live output consequences, and the fix is a
+   one-line change — but make it a deliberate decision, not a drive-by edit: the
+   stage prompts and their schema validators were tuned against the pinned model,
+   so an upgrade needs a pipeline run on a known deck and a diff of the artifacts
+   before it is trusted. Re-check the current model lineup at the time of reading
+   rather than treating this list of names as durable.
 4. **`commands/dashboard.md` and `commands/migrate.md` contain a doubled
    interpreter path** (`./.venv/bin/./.venv/bin/python`) from the venv-path rewrite.
    The other four command files are correct.
-5. **`SKILL.md` paths point at a local Mac layout** (`~/Desktop/Claude Concierge/…`).
-   Resolve job paths relative to the repository root instead.
+5. **`SKILL.md` contradicts itself on where this repo lives.** Line 19 gives the
+   job-artifact path under a retired layout (`~/Desktop/Claude Concierge/…`) while
+   line 77 already carries the correct current one
+   (`~/Desktop/CLAUDE/02-Internal-Operations/Concierge-Service/pcd-gem-engine`).
+   Trust line 77, and resolve job paths relative to the repository root rather than
+   either literal. The `~/Desktop/Pipeline_Report.docx` paths elsewhere in that file
+   are output destinations a user chooses, not layout assertions — leave them alone.
 6. **`src/stages/05_deal_card.py` and `06_lp_emails.py` carry `TODO` comments about
    loading `01_fund_extract` for ground truth.** That wiring is still open in the
-   live orchestrator too — stages 05 and 06 do not receive the fund extract.
+   live orchestrator too — stages 05 and 06 do not receive the fund extract, in
+   either the full-pipeline path or the single-stage rerun path. What is missing is
+   DIRECT access, not the facts themselves: the extract is injected into
+   `02_deck_analysis` (`src/orchestrator.py:189`), so it reaches 05 and 06
+   second-hand through `analyst_extraction_report`. Read a verified-facts
+   discrepancy in a deal card or an LP email as a lossy hand-off, not as the
+   extract having been ignored.
 
 ## Git workflow
 
