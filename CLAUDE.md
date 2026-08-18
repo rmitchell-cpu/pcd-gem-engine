@@ -296,13 +296,14 @@ silently as a side effect of other work, and do not be misled by them.
    `./.venv/bin/python`. If a command file ever fails with "no such file or
    directory" on the interpreter, check for this doubling before anything else —
    a bulk path rewrite can reintroduce it in one edit.
-5. **`SKILL.md` contradicts itself on where this repo lives.** Line 19 gives the
+5. **Fixed 17 August 2026.** `SKILL.md`'s Required Inputs section gave the
    job-artifact path under a retired layout (`~/Desktop/Claude Concierge/…`) while
-   line 77 already carries the correct current one
-   (`~/Desktop/CLAUDE/02-Internal-Operations/Concierge-Service/pcd-gem-engine`).
-   Trust line 77, and resolve job paths relative to the repository root rather than
-   either literal. The `~/Desktop/Pipeline_Report.docx` paths elsewhere in that file
-   are output destinations a user chooses, not layout assertions — leave them alone.
+   its own Invocation section carried the correct current one — a file
+   contradicting itself. It now states the path repo-root-relative
+   (`<repo root>/jobs/<job_id>/artifacts/`) with the current local root as an
+   example, so a future folder move cannot reintroduce the contradiction. The
+   `~/Desktop/Pipeline_Report.docx` paths elsewhere in that file are output
+   destinations a user chooses, not layout assertions — leave them alone.
 6. **`src/stages/05_deal_card.py` and `06_lp_emails.py` carry `TODO` comments about
    loading `01_fund_extract` for ground truth.** That wiring is still open in the
    live orchestrator too — stages 05 and 06 do not receive the fund extract, in

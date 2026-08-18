@@ -13,13 +13,13 @@ The skill delegates rendering to the Python script — it does not reimplement t
 
 ## Required Inputs
 
-The user must specify (or the assistant must determine) the path to a job's artifacts directory. The path is typically:
+The user must specify (or the assistant must determine) the path to a job's artifacts directory. Resolve it **relative to the repository root**, never from a remembered absolute layout:
 
 ```
-~/Desktop/Claude Concierge/pcd-gem-engine/jobs/<job_id>/artifacts/
+<repo root>/jobs/<job_id>/artifacts/
 ```
 
-Where `<job_id>` is a folder name like `20260426_134003_ee830c53`.
+Where `<job_id>` is a folder name like `20260426_134003_ee830c53`. On the local Mac the repo root is currently `~/Desktop/CLAUDE/02-Internal-Operations/Concierge-Service/pcd-gem-engine` (matching the Invocation section below); in a Cowork sandbox it is wherever the project is mounted. (Until 17 August 2026 this section gave a retired `~/Desktop/Claude Concierge/…` layout that contradicted the Invocation section — resolve from the repo root and that class of drift cannot recur.)
 
 The artifacts directory must contain six **REQUIRED** files. The renderer will fail if any are missing:
 
