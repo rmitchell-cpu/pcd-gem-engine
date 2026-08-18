@@ -286,9 +286,12 @@ silently as a side effect of other work, and do not be misled by them.
    so an upgrade needs a pipeline run on a known deck and a diff of the artifacts
    before it is trusted. Re-check the current model lineup at the time of reading
    rather than treating this list of names as durable.
-4. **`commands/dashboard.md` and `commands/migrate.md` contain a doubled
-   interpreter path** (`./.venv/bin/./.venv/bin/python`) from the venv-path rewrite.
-   The other four command files are correct.
+4. **Fixed 17 August 2026 — kept for the pattern.** `commands/dashboard.md` and
+   `commands/migrate.md` carried a doubled interpreter path
+   (`./.venv/bin/./.venv/bin/python`) from the venv-path rewrite; both now read
+   `./.venv/bin/python`. If a command file ever fails with "no such file or
+   directory" on the interpreter, check for this doubling before anything else —
+   a bulk path rewrite can reintroduce it in one edit.
 5. **`SKILL.md` contradicts itself on where this repo lives.** Line 19 gives the
    job-artifact path under a retired layout (`~/Desktop/Claude Concierge/…`) while
    line 77 already carries the correct current one
