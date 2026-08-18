@@ -269,11 +269,15 @@ silently as a side effect of other work, and do not be misled by them.
    Python identifiers anyway, which is part of why they were abandoned.) The one
    thing `src/stages/` is still good for: `commands/rerun-stage.md` cites it as the
    list of valid stage names.
-2. **`migrate.py` runs `001_schema.sql`, which creates the retired `gem_*` tables.**
-   Production runs the `pipeline_*` schema from `002_rebuild_schema.sql`, which was
-   applied by hand on 25 April 2026 and is checked in as documentation only.
-   Running `migrate.py` against a live database would recreate retired tables.
-   Treat it as historical; confirm with the user before any non-dry-run migration.
+2. **Fixed 17 August 2026 — `migrate.py` now runs `002_rebuild_schema.sql`,** the
+   pipeline_* schema of record; until then it ran `001_schema.sql` and a live run
+   would have recreated the retired `gem_*` tables. What remains true: 001 is
+   history only — never point the script back at it. 002 is safe to re-run against
+   production (all `CREATE TABLE IF NOT EXISTS`; the column renames it documents
+   were applied by hand and exist only as comments) but is NOT a fresh-database
+   bootstrap — it references `gp_pipeline(id)`, which only 001 created, and fails
+   loudly on an empty database. Still confirm with the user before any non-dry-run
+   migration.
 3. **Model constant drift.** `config/settings.py` hardcodes
    `MODEL = "claude-opus-4-7"`; `.env.example` advertises a `GEM_MODEL` override
    defaulting to `claude-opus-4-6`. `GEM_MODEL` is never read by any code. Changing
